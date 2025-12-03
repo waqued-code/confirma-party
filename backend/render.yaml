@@ -1,0 +1,24 @@
+databases:
+  - name: confirma-party-db
+    databaseName: confirma_party
+    user: confirma_party_user
+    plan: free
+
+services:
+  - type: web
+    name: confirma-party-api
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run prisma:migrate:deploy && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: confirma-party-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false

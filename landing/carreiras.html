@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carreiras - Confirma.Party</title>
+  <meta name="description" content="Faça parte do time Confirma.Party. Confira nossas vagas abertas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .careers-hero {
+      background: linear-gradient(135deg, #fdf2f8, #faf5ff);
+      text-align: center;
+      padding: 10rem 2rem 6rem;
+    }
+
+    .careers-hero h1 {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      color: var(--gray-900);
+      margin-bottom: 1rem;
+    }
+
+    .careers-hero p {
+      font-size: 1.25rem;
+      color: var(--gray-600);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .benefits-grid {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .benefit-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .benefit-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1rem;
+    }
+
+    .benefit-title {
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .benefit-desc {
+      color: var(--gray-600);
+      font-size: 0.9375rem;
+    }
+
+    .jobs-section { background: white; }
+
+    .jobs-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .job-card {
+      background: var(--gray-50);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .job-card:hover {
+      background: white;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .job-info h3 {
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .job-meta {
+      display: flex;
+      gap: 1rem;
+      color: var(--gray-500);
+      font-size: 0.875rem;
+    }
+
+    .job-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .no-jobs {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .no-jobs-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .no-jobs h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .no-jobs p {
+      color: var(--gray-600);
+      margin-bottom: 1.5rem;
+    }
+
+    .culture-section {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+      text-align: center;
+    }
+
+    .culture-section h2 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .culture-section p {
+      font-size: 1.125rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .culture-values {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .culture-value {
+      background: rgba(255,255,255,0.1);
+      padding: 1rem 1.5rem;
+      border-radius: 100px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .benefits-grid { grid-template-columns: 1fr; }
+      .careers-hero h1 { font-size: 2.5rem; }
+      .job-card { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="confetti-container">
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+  </div>
+
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="images/logo.svg" alt="confirma.party"></a>
+      <button class="mobile-menu-btn">☰</button>
+      <div class="nav-links">
+        <a href="como-funciona.html">Como Funciona</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="precos.html">Preços</a>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="careers-hero">
+    <div class="section-badge fade-in">Carreiras</div>
+    <h1 class="fade-in">Venha fazer parte do time</h1>
+    <p class="fade-in">Estamos construindo o futuro da organização de eventos. Junte-se a nós nessa jornada!</p>
+  </header>
+
+  <section style="background: var(--cream);">
+    <div class="section-header fade-in">
+      <div class="section-badge">Benefícios</div>
+      <h2 class="section-title">Por que trabalhar conosco</h2>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-card fade-in">
+        <div class="benefit-icon">🏠</div>
+        <h3 class="benefit-title">100% Remoto</h3>
+        <p class="benefit-desc">Trabalhe de onde quiser. Flexibilidade total de horário e local.</p>
+      </div>
+      <div class="benefit-card fade-in">
+        <div class="benefit-icon">📈</div>
+        <h3 class="benefit-title">Crescimento</h3>
+        <p class="benefit-desc">Plano de carreira claro e oportunidades de desenvolvimento.</p>
+      </div>
+      <div class="benefit-card fade-in">
+        <div class="benefit-icon">💰</div>
+        <h3 class="benefit-title">Salário Competitivo</h3>
+        <p class="benefit-desc">Remuneração acima do mercado + stock options.</p>
+      </div>
+      <div class="benefit-card fade-in">
+        <div class="benefit-icon">🏥</div>
+        <h3 class="benefit-title">Plano de Saúde</h3>
+        <p class="benefit-desc">Saúde e dental sem coparticipação para você e família.</p>
+      </div>
+      <div class="benefit-card fade-in">
+        <div class="benefit-icon">📚</div>
+        <h3 class="benefit-title">Educação</h3>
+        <p class="benefit-desc">Budget para cursos, conferências e livros.</p>
+      </div>
+      <div class="benefit-card fade-in">
+        <div class="benefit-icon">🎉</div>
+        <h3 class="benefit-title">Cultura Incrível</h3>
+        <p class="benefit-desc">Time colaborativo, ambiente descontraído e muitas festas!</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="jobs-section">
+    <div class="section-header fade-in">
+      <div class="section-badge">Vagas</div>
+      <h2 class="section-title">Posições Abertas</h2>
+    </div>
+
+    <div class="jobs-list">
+      <div class="no-jobs fade-in">
+        <div class="no-jobs-icon">🔍</div>
+        <h3>Nenhuma vaga aberta no momento</h3>
+        <p>Mas estamos sempre procurando pessoas incríveis! Envie seu currículo para nosso banco de talentos.</p>
+        <a href="mailto:carreiras@confirma.party" class="btn btn-primary">Enviar Currículo</a>
+      </div>
+
+      <!-- Exemplo de vaga (descomentarquando houver vagas)
+      <div class="job-card fade-in">
+        <div class="job-info">
+          <h3>Desenvolvedor(a) Full Stack</h3>
+          <div class="job-meta">
+            <span class="job-tag">💻 Remoto</span>
+            <span class="job-tag">⏰ Full-time</span>
+            <span class="job-tag">📍 Brasil</span>
+          </div>
+        </div>
+        <a href="#" class="btn btn-primary btn-sm">Ver Vaga</a>
+      </div>
+      -->
+    </div>
+  </section>
+
+  <section class="culture-section">
+    <div class="container fade-in">
+      <h2>Nossa Cultura</h2>
+      <p>Acreditamos que pessoas felizes constroem produtos incríveis. Valorizamos autonomia, transparência e colaboração.</p>
+      <div class="culture-values">
+        <div class="culture-value">Ownership</div>
+        <div class="culture-value">Transparência</div>
+        <div class="culture-value">Colaboração</div>
+        <div class="culture-value">Inovação</div>
+        <div class="culture-value">Diversidade</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo"><img src="images/logo-white.svg" alt="confirma.party"></div>
+        <p class="footer-desc">A maneira mais inteligente de gerenciar confirmações de presença.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Produto</h4>
+        <ul class="footer-links">
+          <li><a href="como-funciona.html">Como Funciona</a></li>
+          <li><a href="eventos.html">Eventos</a></li>
+          <li><a href="precos.html">Preços</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Empresa</h4>
+        <ul class="footer-links">
+          <li><a href="sobre.html">Sobre</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="carreiras.html">Carreiras</a></li>
+          <li><a href="contato.html">Contato</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="termos.html">Termos de Uso</a></li>
+          <li><a href="privacidade.html">Privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2024 Confirma.Party. Todos os direitos reservados.</div>
+      <div class="footer-social">
+        <a href="https://instagram.com/confirmaparty" target="_blank" rel="noopener">📸</a>
+        <a href="https://twitter.com/confirmaparty" target="_blank" rel="noopener">🐦</a>
+        <a href="https://linkedin.com/company/confirmaparty" target="_blank" rel="noopener">💼</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  parties   Party[]
+}
+
+model Party {
+  id                String   @id @default(uuid())
+  name              String
+  date              DateTime
+  contactDate       DateTime // Data para começar a entrar em contato
+  partyType         String   // Casamento, Aniversário, Corporativo, etc.
+  observations      String?
+  inviteMessage     String?  // Mensagem gerada pela IA
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guests            Guest[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+enum GuestStatus {
+  NAO_RESPONDEU
+  CONFIRMOU_PRESENCA
+  RECUSOU_CONVITE
+  NECESSITA_CONVERSAR
+}
+
+enum ContactMethod {
+  WHATSAPP
+  LIGACAO
+}
+
+model Guest {
+  id            String        @id @default(uuid())
+  name          String
+  phone         String
+  contactMethod ContactMethod @default(WHATSAPP)
+  status        GuestStatus   @default(NAO_RESPONDEU)
+  lastContactAt DateTime?
+  notes         String?       // Observações da conversa
+  partyId       String
+  party         Party         @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  messages      Message[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  isFromAI  Boolean  @default(false)
+  guestId   String
+  guest     Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}

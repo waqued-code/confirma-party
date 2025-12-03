@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirma.Party - Confirmação de Presença Inteligente com IA</title>
+  <meta name="description" content="Automatize a confirmação de presença das suas festas com IA e WhatsApp. Perfeito para casamentos, aniversários e eventos corporativos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 80%;
+      height: 150%;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -20%;
+      width: 60%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-text {
+      animation: fadeInUp 1s ease;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(236, 72, 153, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--pink);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-badge span { animation: pulse 2s infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: 4rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      color: var(--gray-900);
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--gray-600);
+      margin-bottom: 2rem;
+      max-width: 500px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    .hero-visual {
+      position: relative;
+      animation: fadeInRight 1s ease 0.3s both;
+    }
+
+    .hero-card {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--shadow-xl), var(--shadow-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--gold));
+    }
+
+    .mock-dashboard { display: flex; flex-direction: column; gap: 1rem; }
+    .mock-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--gray-100); }
+    .mock-title { font-weight: 600; color: var(--gray-800); }
+    .mock-badge { background: linear-gradient(135deg, var(--mint), #10b981); color: white; padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
+    .mock-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .mock-stat { text-align: center; padding: 1rem; background: var(--gray-50); border-radius: 12px; }
+    .mock-stat-value { font-size: 1.5rem; font-weight: 700; }
+    .mock-stat-value.green { color: var(--mint); }
+    .mock-stat-value.yellow { color: var(--gold); }
+    .mock-stat-value.red { color: var(--coral); }
+    .mock-stat-label { font-size: 0.75rem; color: var(--gray-600); }
+    .mock-progress { background: var(--gray-100); border-radius: 100px; height: 8px; overflow: hidden; }
+    .mock-progress-bar { height: 100%; background: linear-gradient(90deg, var(--mint), var(--sky)); border-radius: 100px; width: 75%; animation: progressGrow 2s ease 1s both; }
+
+    @keyframes progressGrow { from { width: 0; } to { width: 75%; } }
+
+    .floating-elements { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+    .floating-emoji { position: absolute; font-size: 2rem; animation: float 6s ease-in-out infinite; }
+    .floating-emoji:nth-child(1) { top: -20px; right: -20px; animation-delay: 0s; }
+    .floating-emoji:nth-child(2) { bottom: -10px; left: -30px; animation-delay: 1s; }
+    .floating-emoji:nth-child(3) { top: 50%; right: -40px; animation-delay: 2s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* Steps */
+    .steps {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--gold), var(--mint));
+      z-index: 0;
+    }
+
+    .step { text-align: center; position: relative; z-index: 1; }
+
+    .step-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      background: white;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.3s ease;
+    }
+
+    .step:hover .step-icon { transform: scale(1.1) rotate(5deg); }
+    .step:nth-child(1) .step-icon { background: linear-gradient(135deg, #fce7f3, #fdf2f8); }
+    .step:nth-child(2) .step-icon { background: linear-gradient(135deg, #ede9fe, #f5f3ff); }
+    .step:nth-child(3) .step-icon { background: linear-gradient(135deg, #fef3c7, #fffbeb); }
+    .step:nth-child(4) .step-icon { background: linear-gradient(135deg, #d1fae5, #ecfdf5); }
+    .step-title { font-weight: 700; color: var(--gray-800); margin-bottom: 0.5rem; }
+    .step-desc { font-size: 0.875rem; color: var(--gray-600); }
+
+    /* Event Cards */
+    .events-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .event-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.4s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .event-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .event-image {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+    }
+
+    .event-card:nth-child(1) .event-image { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+    .event-card:nth-child(2) .event-image { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+    .event-card:nth-child(3) .event-image { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+
+    .event-content { padding: 2rem; }
+    .event-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; }
+    .event-desc { color: var(--gray-600); margin-bottom: 1rem; font-size: 0.9375rem; }
+    .event-link { color: var(--pink); font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; }
+
+    /* Features Grid */
+    .features-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      border-radius: 20px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-100);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      background: white;
+      border-color: var(--pink-light);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+    }
+
+    .feature-title { font-weight: 700; font-size: 1.125rem; color: var(--gray-900); margin-bottom: 0.5rem; }
+    .feature-desc { color: var(--gray-600); font-size: 0.9375rem; }
+
+    /* Testimonials */
+    .testimonials-section {
+      background: linear-gradient(135deg, #fdf2f8, #faf5ff);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonials-section::before {
+      content: '"';
+      position: absolute;
+      top: 2rem;
+      left: 5%;
+      font-family: var(--font-display);
+      font-size: 20rem;
+      color: rgba(236, 72, 153, 0.05);
+      line-height: 1;
+    }
+
+    .testimonials-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .testimonial-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.3s ease;
+    }
+
+    .testimonial-card:hover { transform: translateY(-5px); }
+    .testimonial-stars { color: var(--gold); font-size: 1.25rem; margin-bottom: 1rem; }
+    .testimonial-text { color: var(--gray-700); font-size: 0.9375rem; line-height: 1.7; margin-bottom: 1.5rem; }
+    .testimonial-author { display: flex; align-items: center; gap: 1rem; }
+    .testimonial-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: linear-gradient(135deg, var(--pink-light), var(--purple-light)); }
+    .testimonial-name { font-weight: 600; color: var(--gray-900); }
+    .testimonial-role { font-size: 0.875rem; color: var(--gray-500); }
+
+    /* CTA */
+    .cta {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    .cta-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+    .cta h2 { font-family: var(--font-display); font-size: 3rem; font-weight: 700; margin-bottom: 1rem; }
+    .cta p { font-size: 1.25rem; opacity: 0.9; margin-bottom: 2rem; }
+    .cta .btn-secondary { background: white; color: var(--pink); border: none; }
+    .cta .btn-secondary:hover { background: var(--cream); }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-content { grid-template-columns: 1fr; text-align: center; }
+      .hero-text { order: 1; }
+      .hero-visual { order: 2; max-width: 500px; margin: 0 auto; }
+      .hero p { margin: 0 auto 2rem; }
+      .hero-buttons { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .steps::before { display: none; }
+      .events-grid, .features-grid, .testimonials-grid { grid-template-columns: 1fr; max-width: 500px; }
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .steps { grid-template-columns: 1fr; }
+      .hero-stats { flex-direction: column; gap: 1.5rem; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Confetti -->
+  <div class="confetti-container">
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="images/logo.svg" alt="confirma.party"></a>
+      <button class="mobile-menu-btn">☰</button>
+      <div class="nav-links">
+        <a href="como-funciona.html">Como Funciona</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="precos.html">Preços</a>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <span>✨</span> Novidade: IA que conversa com seus convidados
+        </div>
+        <h1>
+          Confirme presenças<br>
+          <span class="highlight">automaticamente</span><br>
+          com IA
+        </h1>
+        <p>
+          Envie convites pelo WhatsApp e deixe nossa IA cuidar das confirmações.
+          Perfeito para casamentos, aniversários e eventos corporativos.
+        </p>
+        <div class="hero-buttons">
+          <a href="http://localhost:3000/register" class="btn btn-primary">
+            Começar Gratuitamente
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </a>
+          <a href="como-funciona.html" class="btn btn-secondary">Ver como funciona</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-value" data-count="10000">0</div>
+            <div class="stat-label">Convites enviados</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">98%</div>
+            <div class="stat-label">Taxa de resposta</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" data-count="500">0</div>
+            <div class="stat-label">Festas realizadas</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="mock-dashboard">
+            <div class="mock-header">
+              <div class="mock-title">Casamento Ana & Pedro</div>
+              <div class="mock-badge">Ao vivo</div>
+            </div>
+            <div class="mock-stats">
+              <div class="mock-stat">
+                <div class="mock-stat-value green">127</div>
+                <div class="mock-stat-label">Confirmados</div>
+              </div>
+              <div class="mock-stat">
+                <div class="mock-stat-value yellow">23</div>
+                <div class="mock-stat-label">Pendentes</div>
+              </div>
+              <div class="mock-stat">
+                <div class="mock-stat-value red">8</div>
+                <div class="mock-stat-label">Recusados</div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.875rem; color: var(--gray-600);">Progresso</span>
+                <span style="font-size: 0.875rem; font-weight: 600;">75%</span>
+              </div>
+              <div class="mock-progress">
+                <div class="mock-progress-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="floating-elements">
+          <span class="floating-emoji">🎉</span>
+          <span class="floating-emoji">💍</span>
+          <span class="floating-emoji">🎂</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works Preview -->
+  <section style="background: white;">
+    <div class="section-header fade-in">
+      <div class="section-badge">Como Funciona</div>
+      <h2 class="section-title">Simples como deve ser</h2>
+      <p class="section-subtitle">
+        Em 4 passos, sua festa está organizada e os convidados confirmados
+      </p>
+    </div>
+    <div class="steps">
+      <div class="step fade-in">
+        <div class="step-icon">📝</div>
+        <h3 class="step-title">Crie sua festa</h3>
+        <p class="step-desc">Cadastre os dados do evento: data, tipo e detalhes importantes</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-icon">📋</div>
+        <h3 class="step-title">Importe convidados</h3>
+        <p class="step-desc">Faça upload da sua planilha com os nomes e telefones</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-icon">🤖</div>
+        <h3 class="step-title">IA cria a mensagem</h3>
+        <p class="step-desc">Nossa IA gera um convite personalizado e elegante</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-icon">✅</div>
+        <h3 class="step-title">Acompanhe tudo</h3>
+        <p class="step-desc">Veja as confirmações em tempo real no dashboard</p>
+      </div>
+    </div>
+    <div class="text-center mt-4 fade-in">
+      <a href="como-funciona.html" class="btn btn-outline">Saiba mais sobre o processo</a>
+    </div>
+  </section>
+
+  <!-- Event Types Preview -->
+  <section style="background: linear-gradient(180deg, var(--cream) 0%, white 100%);">
+    <div class="section-header fade-in">
+      <div class="section-badge">Tipos de Evento</div>
+      <h2 class="section-title">Perfeito para cada celebração</h2>
+      <p class="section-subtitle">
+        Do aniversário íntimo ao grande casamento, temos a solução certa
+      </p>
+    </div>
+    <div class="events-grid">
+      <a href="eventos.html#aniversario" class="event-card fade-in">
+        <div class="event-image">🎂</div>
+        <div class="event-content">
+          <h3 class="event-title">Aniversários</h3>
+          <p class="event-desc">
+            Festas de 15 anos, infantis, adultos...
+            Deixe a IA criar convites divertidos e únicos.
+          </p>
+          <span class="event-link">Saber mais →</span>
+        </div>
+      </a>
+      <a href="eventos.html#casamento" class="event-card fade-in">
+        <div class="event-image">💒</div>
+        <div class="event-content">
+          <h3 class="event-title">Casamentos</h3>
+          <p class="event-desc">
+            O grande dia merece organização impecável.
+            Gerencie todos os convidados em um só lugar.
+          </p>
+          <span class="event-link">Saber mais →</span>
+        </div>
+      </a>
+      <a href="eventos.html#corporativo" class="event-card fade-in">
+        <div class="event-image">🏢</div>
+        <div class="event-content">
+          <h3 class="event-title">Corporativos</h3>
+          <p class="event-desc">
+            Confraternizações, workshops, lançamentos...
+            Profissionalismo na comunicação.
+          </p>
+          <span class="event-link">Saber mais →</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Features Preview -->
+  <section style="background: white;">
+    <div class="section-header fade-in">
+      <div class="section-badge">Funcionalidades</div>
+      <h2 class="section-title">Tudo que você precisa</h2>
+      <p class="section-subtitle">
+        Ferramentas poderosas para uma organização perfeita
+      </p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🤖</div>
+        <h3 class="feature-title">IA Conversacional</h3>
+        <p class="feature-desc">Nossa IA responde dúvidas dos convidados automaticamente, 24 horas por dia.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">💬</div>
+        <h3 class="feature-title">WhatsApp Integrado</h3>
+        <p class="feature-desc">Envie convites diretamente pelo WhatsApp, o app que todos já usam.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">Dashboard em Tempo Real</h3>
+        <p class="feature-desc">Acompanhe confirmações, recusas e pendentes em um painel visual intuitivo.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📱</div>
+        <h3 class="feature-title">100% Responsivo</h3>
+        <p class="feature-desc">Gerencie suas festas de qualquer dispositivo, a qualquer momento.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📋</div>
+        <h3 class="feature-title">Import de Planilhas</h3>
+        <p class="feature-desc">Importe sua lista de convidados de Excel ou CSV em segundos.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">✨</div>
+        <h3 class="feature-title">Mensagens Personalizadas</h3>
+        <p class="feature-desc">A IA cria mensagens únicas que combinam com o estilo do seu evento.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section">
+    <div class="section-header fade-in">
+      <div class="section-badge">Depoimentos</div>
+      <h2 class="section-title">O que nossos clientes dizem</h2>
+      <p class="section-subtitle">Histórias reais de festas inesquecíveis</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">
+          "Organizei meu casamento com 200 convidados e o Confirma.Party salvou minha vida!
+          Em 2 dias todos tinham confirmado, sem eu precisar ligar para ninguém."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">👰</div>
+          <div>
+            <div class="testimonial-name">Mariana Costa</div>
+            <div class="testimonial-role">Noiva feliz</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">
+          "Usamos para nossa confraternização de fim de ano com 500 funcionários.
+          O RH adorou a praticidade e os relatórios detalhados."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">👨‍💼</div>
+          <div>
+            <div class="testimonial-name">Ricardo Mendes</div>
+            <div class="testimonial-role">Diretor de RH</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">
+          "A festa de 15 anos da minha filha foi um sucesso! A IA criou uma mensagem
+          super fofa e todos os amigos responderam rapidinho."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">👩</div>
+          <div>
+            <div class="testimonial-name">Fernanda Lima</div>
+            <div class="testimonial-role">Mãe orgulhosa</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="cta-content fade-in">
+      <h2>Pronto para simplificar suas festas?</h2>
+      <p>
+        Junte-se a milhares de organizadores que já descobriram
+        o jeito mais fácil de confirmar presenças.
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="http://localhost:3000/register" class="btn btn-secondary">
+          Criar Conta Grátis
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+          </svg>
+        </a>
+        <a href="precos.html" class="btn btn-outline" style="border-color: white; color: white;">Ver planos e preços</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo"><img src="images/logo-white.svg" alt="confirma.party"></div>
+        <p class="footer-desc">
+          A maneira mais inteligente de gerenciar confirmações de presença.
+          IA + WhatsApp = festas sem estresse.
+        </p>
+      </div>
+      <div>
+        <h4 class="footer-title">Produto</h4>
+        <ul class="footer-links">
+          <li><a href="como-funciona.html">Como Funciona</a></li>
+          <li><a href="eventos.html">Eventos</a></li>
+          <li><a href="precos.html">Preços</a></li>
+          <li><a href="api.html">API</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Empresa</h4>
+        <ul class="footer-links">
+          <li><a href="sobre.html">Sobre</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="carreiras.html">Carreiras</a></li>
+          <li><a href="contato.html">Contato</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="termos.html">Termos de Uso</a></li>
+          <li><a href="privacidade.html">Privacidade</a></li>
+          <li><a href="cookies.html">Cookies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2024 Confirma.Party. Todos os direitos reservados.</div>
+      <div class="footer-social">
+        <a href="https://instagram.com/confirmaparty" target="_blank" rel="noopener" title="Instagram">📸</a>
+        <a href="https://twitter.com/confirmaparty" target="_blank" rel="noopener" title="Twitter">🐦</a>
+        <a href="https://linkedin.com/company/confirmaparty" target="_blank" rel="noopener" title="LinkedIn">💼</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
