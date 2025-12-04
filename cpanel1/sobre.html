@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre Nós - Confirma.Party</title>
+  <meta name="description" content="Conheça a história do Confirma.Party e nossa missão de simplificar a organização de festas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Story Section */
+    .story-section {
+      background: white;
+    }
+
+    .story-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .story-text {
+      font-size: 1.125rem;
+      color: var(--gray-700);
+      line-height: 1.8;
+    }
+
+    .story-text p {
+      margin-bottom: 1.5rem;
+    }
+
+    .story-highlight {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+      border-left: 4px solid var(--pink);
+      padding: 1.5rem 2rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: var(--gray-800);
+    }
+
+    /* Mission Section */
+    .mission-section {
+      background: linear-gradient(135deg, #fdf2f8, #faf5ff);
+    }
+
+    .mission-grid {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .mission-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+    }
+
+    .mission-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    .mission-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.75rem;
+    }
+
+    .mission-desc {
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+    }
+
+    .stats-grid {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 1rem;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* Values Section */
+    .values-section { background: white; }
+
+    .values-grid {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .value-card {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      border-radius: 16px;
+      background: var(--gray-50);
+      transition: all 0.3s;
+    }
+
+    .value-card:hover {
+      background: white;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .value-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .value-title {
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.25rem;
+    }
+
+    .value-desc {
+      color: var(--gray-600);
+      font-size: 0.9375rem;
+    }
+
+    /* Team Section */
+    .team-section {
+      background: var(--cream);
+    }
+
+    .team-grid {
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .team-card {
+      text-align: center;
+    }
+
+    .team-avatar {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, var(--pink-light), var(--purple-light));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      margin: 0 auto 1rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .team-name {
+      font-weight: 700;
+      color: var(--gray-900);
+      font-size: 1.125rem;
+    }
+
+    .team-role {
+      color: var(--pink);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* Timeline */
+    .timeline-section { background: white; }
+
+    .timeline {
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--pink), var(--purple));
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .timeline-dot {
+      width: 42px;
+      height: 42px;
+      background: white;
+      border: 3px solid var(--pink);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .timeline-content {
+      background: var(--gray-50);
+      border-radius: 12px;
+      padding: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .timeline-date {
+      color: var(--pink);
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-title {
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-desc {
+      color: var(--gray-600);
+      font-size: 0.9375rem;
+    }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, var(--gray-900), var(--gray-800));
+      color: white;
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      font-size: 1.125rem;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .mission-grid, .stats-grid { grid-template-columns: 1fr; }
+      .values-grid, .team-grid { grid-template-columns: 1fr; }
+      .stat-number { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Confetti -->
+  <div class="confetti-container">
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="images/logo.svg" alt="confirma.party"></a>
+      <button class="mobile-menu-btn">☰</button>
+      <div class="nav-links">
+        <a href="como-funciona.html">Como Funciona</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="sobre.html" class="active">Sobre</a>
+        <a href="precos.html">Preços</a>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="section-badge fade-in">Sobre Nós</div>
+    <h1 class="section-title fade-in">Transformando a forma de celebrar</h1>
+    <p class="section-subtitle fade-in">
+      Nascemos da frustração de organizar festas. Hoje, ajudamos milhares
+      de pessoas a criar momentos inesquecíveis sem estresse.
+    </p>
+  </header>
+
+  <!-- Story -->
+  <section class="story-section">
+    <div class="story-content fade-in">
+      <div class="story-text">
+        <p>
+          Tudo começou em 2023, quando nosso fundador tentou organizar seu próprio
+          casamento. Com 300 convidados para confirmar, ele passou semanas ligando,
+          mandando mensagens e anotando respostas em planilhas. Foi exaustivo.
+        </p>
+
+        <div class="story-highlight">
+          "Deve existir uma forma melhor de fazer isso. Se a tecnologia pode
+          resolver tantos problemas, por que não resolver a confirmação de presença?"
+        </div>
+
+        <p>
+          Dessa pergunta nasceu o Confirma.Party. Combinamos inteligência artificial
+          de última geração com a praticidade do WhatsApp para criar uma solução
+          que realmente funciona.
+        </p>
+
+        <p>
+          Hoje, já ajudamos mais de 500 festas a acontecer sem o estresse das
+          confirmações manuais. De casamentos íntimos a confraternizações corporativas
+          com centenas de participantes.
+        </p>
+
+        <p>
+          Nossa missão é simples: <strong>deixar você livre para aproveitar a festa,
+          enquanto a tecnologia cuida da organização.</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="mission-section">
+    <div class="section-header fade-in">
+      <h2 class="section-title">Nossa Essência</h2>
+    </div>
+    <div class="mission-grid">
+      <div class="mission-card fade-in">
+        <div class="mission-icon">🎯</div>
+        <h3 class="mission-title">Missão</h3>
+        <p class="mission-desc">
+          Simplificar a organização de eventos para que as pessoas possam
+          focar no que realmente importa: celebrar.
+        </p>
+      </div>
+      <div class="mission-card fade-in">
+        <div class="mission-icon">👁️</div>
+        <h3 class="mission-title">Visão</h3>
+        <p class="mission-desc">
+          Ser a plataforma de referência em gestão inteligente de eventos
+          na América Latina.
+        </p>
+      </div>
+      <div class="mission-card fade-in">
+        <div class="mission-icon">💎</div>
+        <h3 class="mission-title">Propósito</h3>
+        <p class="mission-desc">
+          Acreditamos que cada celebração merece ser perfeita,
+          sem a burocracia atrapalhar a magia.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-item fade-in">
+        <div class="stat-number" data-count="10000">0</div>
+        <div class="stat-label">Convites enviados</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-number" data-count="500">0</div>
+        <div class="stat-label">Festas realizadas</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-number">98%</div>
+        <div class="stat-label">Taxa de resposta</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-number">4.9</div>
+        <div class="stat-label">Avaliação média</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="values-section">
+    <div class="section-header fade-in">
+      <div class="section-badge">Valores</div>
+      <h2 class="section-title">O que nos guia</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card fade-in">
+        <div class="value-icon">⚡</div>
+        <div>
+          <div class="value-title">Simplicidade</div>
+          <div class="value-desc">Tecnologia complexa, experiência simples. Se não é fácil, não serve.</div>
+        </div>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon">🤝</div>
+        <div>
+          <div class="value-title">Empatia</div>
+          <div class="value-desc">Entendemos a ansiedade de organizar eventos. Somos seu aliado.</div>
+        </div>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon">🚀</div>
+        <div>
+          <div class="value-title">Inovação</div>
+          <div class="value-desc">Usamos IA de ponta para resolver problemas reais de forma criativa.</div>
+        </div>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon">🔒</div>
+        <div>
+          <div class="value-title">Confiança</div>
+          <div class="value-desc">Seus dados estão seguros. Privacidade é inegociável.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="timeline-section">
+    <div class="section-header fade-in">
+      <div class="section-badge">Nossa Jornada</div>
+      <h2 class="section-title">De uma ideia a milhares de festas</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot">💡</div>
+        <div class="timeline-content">
+          <div class="timeline-date">Janeiro 2023</div>
+          <div class="timeline-title">A ideia nasce</div>
+          <div class="timeline-desc">Frustração com confirmações manuais inspira a criação do projeto.</div>
+        </div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot">🛠️</div>
+        <div class="timeline-content">
+          <div class="timeline-date">Março 2023</div>
+          <div class="timeline-title">Primeiro protótipo</div>
+          <div class="timeline-desc">MVP testado no casamento do fundador. 300 confirmações em 48h!</div>
+        </div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot">🚀</div>
+        <div class="timeline-content">
+          <div class="timeline-date">Julho 2023</div>
+          <div class="timeline-title">Lançamento público</div>
+          <div class="timeline-desc">Plataforma aberta para todos. Primeiros 100 usuários em 2 semanas.</div>
+        </div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot">🤖</div>
+        <div class="timeline-content">
+          <div class="timeline-date">Outubro 2023</div>
+          <div class="timeline-title">IA Conversacional</div>
+          <div class="timeline-desc">Lançamento da IA que responde convidados automaticamente.</div>
+        </div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot">🎉</div>
+        <div class="timeline-content">
+          <div class="timeline-date">2024</div>
+          <div class="timeline-title">Expansão</div>
+          <div class="timeline-desc">500+ festas organizadas. Novos recursos e planos empresariais.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="team-section">
+    <div class="section-header fade-in">
+      <div class="section-badge">Equipe</div>
+      <h2 class="section-title">Quem faz acontecer</h2>
+      <p class="section-subtitle">Pessoas apaixonadas por tecnologia e celebrações</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card fade-in">
+        <div class="team-avatar">👨‍💻</div>
+        <div class="team-name">Lucas Mendes</div>
+        <div class="team-role">Fundador & CEO</div>
+      </div>
+      <div class="team-card fade-in">
+        <div class="team-avatar">👩‍💼</div>
+        <div class="team-name">Ana Carolina</div>
+        <div class="team-role">Head de Produto</div>
+      </div>
+      <div class="team-card fade-in">
+        <div class="team-avatar">👨‍🔬</div>
+        <div class="team-name">Pedro Silva</div>
+        <div class="team-role">Lead de IA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container fade-in">
+      <h2>Faça parte dessa história</h2>
+      <p>Junte-se aos milhares de organizadores que já simplificaram suas festas.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="http://localhost:3000/register" class="btn btn-primary">Começar Gratuitamente</a>
+        <a href="contato.html" class="btn btn-secondary">Fale Conosco</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo"><img src="images/logo-white.svg" alt="confirma.party"></div>
+        <p class="footer-desc">A maneira mais inteligente de gerenciar confirmações de presença.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Produto</h4>
+        <ul class="footer-links">
+          <li><a href="como-funciona.html">Como Funciona</a></li>
+          <li><a href="eventos.html">Eventos</a></li>
+          <li><a href="precos.html">Preços</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Empresa</h4>
+        <ul class="footer-links">
+          <li><a href="sobre.html">Sobre</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contato.html">Contato</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="termos.html">Termos de Uso</a></li>
+          <li><a href="privacidade.html">Privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2024 Confirma.Party. Todos os direitos reservados.</div>
+      <div class="footer-social">
+        <a href="https://instagram.com/confirmaparty" target="_blank" rel="noopener" title="Instagram">📸</a>
+        <a href="https://twitter.com/confirmaparty" target="_blank" rel="noopener" title="Twitter">🐦</a>
+        <a href="https://linkedin.com/company/confirmaparty" target="_blank" rel="noopener" title="LinkedIn">💼</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

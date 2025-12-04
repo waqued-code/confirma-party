@@ -67,7 +67,6 @@ body {
   height: 10px;
   opacity: 0.6;
   animation: confetti-fall linear infinite;
-  animation-play-state: paused;
 }
 
 .confetti:nth-child(1) { left: 5%; animation-duration: 14s; animation-delay: 0s; background: var(--pink); border-radius: 50%; }
@@ -427,19 +426,14 @@ footer {
   color: white;
 }
 
-/* Scroll Animations - carrega após o FCP */
+/* Scroll Animations */
 .fade-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.js-loaded .fade-in {
   opacity: 0;
   transform: translateY(30px);
   transition: all 0.8s ease;
 }
 
-.js-loaded .fade-in.visible {
+.fade-in.visible {
   opacity: 1;
   transform: translateY(0);
 }

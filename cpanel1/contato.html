@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contato - Confirma.Party</title>
+  <meta name="description" content="Entre em contato com a equipe do Confirma.Party. Estamos prontos para ajudar você.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .contact-section { background: white; }
+
+    .contact-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 4rem;
+    }
+
+    .contact-info {
+      padding: 2rem;
+    }
+
+    .contact-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 1rem;
+    }
+
+    .contact-desc {
+      color: var(--gray-600);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .contact-item {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: var(--gray-50);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    .contact-item:hover {
+      background: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .contact-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .contact-item-title {
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-item-value {
+      color: var(--gray-600);
+      font-size: 0.9375rem;
+    }
+
+    .contact-item-value a {
+      color: var(--pink);
+      text-decoration: none;
+    }
+
+    .contact-item-value a:hover {
+      text-decoration: underline;
+    }
+
+    .contact-form-wrapper {
+      background: var(--gray-50);
+      border-radius: 24px;
+      padding: 2.5rem;
+    }
+
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      transition: border-color 0.3s;
+      background: white;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--pink);
+    }
+
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-submit {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    /* FAQ Section */
+    .faq-section { background: var(--cream); }
+
+    .faq-grid {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: white;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-100);
+    }
+
+    .faq-question {
+      padding: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--gray-800);
+      transition: color 0.3s;
+    }
+
+    .faq-question:hover { color: var(--pink); }
+    .faq-question .icon { transition: transform 0.3s; font-size: 1.25rem; }
+    .faq-item.open .faq-question .icon { transform: rotate(45deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-item.open .faq-answer { max-height: 300px; }
+
+    .faq-answer-content {
+      padding: 0 1.5rem 1.5rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
+    /* Map placeholder */
+    .map-section {
+      background: var(--gray-100);
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-500);
+    }
+
+    @media (max-width: 768px) {
+      .contact-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Confetti -->
+  <div class="confetti-container">
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="images/logo.svg" alt="confirma.party"></a>
+      <button class="mobile-menu-btn">☰</button>
+      <div class="nav-links">
+        <a href="como-funciona.html">Como Funciona</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="precos.html">Preços</a>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="section-badge fade-in">Contato</div>
+    <h1 class="section-title fade-in">Fale com a gente</h1>
+    <p class="section-subtitle fade-in">
+      Tem alguma dúvida ou quer saber mais? Nossa equipe está pronta para ajudar.
+    </p>
+  </header>
+
+  <!-- Contact Section -->
+  <section class="contact-section">
+    <div class="contact-grid">
+      <div class="contact-info fade-in">
+        <h2 class="contact-title">Entre em contato</h2>
+        <p class="contact-desc">
+          Preencha o formulário ao lado ou use um dos canais abaixo.
+          Respondemos em até 24 horas úteis.
+        </p>
+
+        <div class="contact-item">
+          <div class="contact-icon">📧</div>
+          <div>
+            <div class="contact-item-title">Email</div>
+            <div class="contact-item-value">
+              <a href="mailto:contato@confirma.party">contato@confirma.party</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">💬</div>
+          <div>
+            <div class="contact-item-title">WhatsApp</div>
+            <div class="contact-item-value">
+              <a href="https://wa.me/5511999999999" target="_blank">(11) 99999-9999</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">🕐</div>
+          <div>
+            <div class="contact-item-title">Horário de Atendimento</div>
+            <div class="contact-item-value">Seg - Sex, 9h às 18h</div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-item-title">Localização</div>
+            <div class="contact-item-value">São Paulo, Brasil</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrapper fade-in">
+        <h3 class="form-title">Envie sua mensagem</h3>
+        <form id="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="name">Nome *</label>
+              <input type="text" id="name" class="form-input" placeholder="Seu nome" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Email *</label>
+              <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="phone">Telefone</label>
+              <input type="tel" id="phone" class="form-input" placeholder="(11) 99999-9999">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="subject">Assunto *</label>
+              <select id="subject" class="form-select" required>
+                <option value="">Selecione...</option>
+                <option value="vendas">Vendas / Planos</option>
+                <option value="suporte">Suporte Técnico</option>
+                <option value="parceria">Parcerias</option>
+                <option value="imprensa">Imprensa</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="message">Mensagem *</label>
+            <textarea id="message" class="form-textarea" placeholder="Como podemos ajudar?" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary form-submit">
+            Enviar Mensagem
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-header fade-in">
+      <div class="section-badge">FAQ</div>
+      <h2 class="section-title">Perguntas Frequentes</h2>
+      <p class="section-subtitle">Respostas rápidas para as dúvidas mais comuns</p>
+    </div>
+
+    <div class="faq-grid">
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          <span>Como faço para testar o sistema gratuitamente?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Basta criar uma conta no plano Básico. Ele é 100% gratuito e permite criar até 1 festa com 50 convidados. Não é necessário cartão de crédito.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          <span>Quanto tempo demora para receber suporte?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Para clientes do plano gratuito, respondemos em até 48 horas. Clientes dos planos pagos têm suporte prioritário com resposta em até 4 horas úteis.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          <span>Vocês fazem integrações personalizadas?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Sim! Para clientes do plano Empresarial, oferecemos integrações personalizadas com CRMs, sistemas de gestão e outras ferramentas. Entre em contato para discutir suas necessidades.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          <span>Como funciona o processo de demonstração?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Agendamos uma videochamada de 30 minutos onde mostramos todas as funcionalidades do sistema, tiramos suas dúvidas e ajudamos você a entender qual plano é ideal para sua necessidade.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo"><img src="images/logo-white.svg" alt="confirma.party"></div>
+        <p class="footer-desc">A maneira mais inteligente de gerenciar confirmações de presença.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Produto</h4>
+        <ul class="footer-links">
+          <li><a href="como-funciona.html">Como Funciona</a></li>
+          <li><a href="eventos.html">Eventos</a></li>
+          <li><a href="precos.html">Preços</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Empresa</h4>
+        <ul class="footer-links">
+          <li><a href="sobre.html">Sobre</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contato.html">Contato</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="termos.html">Termos de Uso</a></li>
+          <li><a href="privacidade.html">Privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2024 Confirma.Party. Todos os direitos reservados.</div>
+      <div class="footer-social">
+        <a href="https://instagram.com/confirmaparty" target="_blank" rel="noopener" title="Instagram">📸</a>
+        <a href="https://twitter.com/confirmaparty" target="_blank" rel="noopener" title="Twitter">🐦</a>
+        <a href="https://linkedin.com/company/confirmaparty" target="_blank" rel="noopener" title="LinkedIn">💼</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Form submission
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+      this.reset();
+    });
+  </script>
+</body>
+</html>

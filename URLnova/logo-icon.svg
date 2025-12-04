@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <!-- Confetti circles from the brand -->
+  <circle cx="8" cy="8" r="5" fill="#ae6da8" opacity="0.9"/>
+  <circle cx="24" cy="6" r="4" fill="#665ea3" opacity="0.9"/>
+  <circle cx="40" cy="12" r="4.5" fill="#47bbea" opacity="0.9"/>
+  <circle cx="14" cy="24" r="3.5" fill="#e77bae" opacity="0.9"/>
+  <circle cx="36" cy="22" r="4" fill="#fff367" opacity="0.9"/>
+  <circle cx="24" cy="38" r="5" fill="#e9734c" opacity="0.9"/>
+</svg>

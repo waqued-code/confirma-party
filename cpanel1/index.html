@@ -5,42 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Confirma.Party - Confirmação de Presença Inteligente com IA</title>
   <meta name="description" content="Automatize a confirmação de presença das suas festas com IA e WhatsApp. Perfeito para casamentos, aniversários e eventos corporativos.">
-
-  <!-- Preconnect para recursos externos -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- Preload de fontes críticas -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap"></noscript>
-
-  <!-- CSS crítico inline para FCP rápido -->
-  <style>
-    :root{--pink:#ec4899;--purple:#8b5cf6;--cream:#fffbf7;--gray-600:#4b5563;--gray-800:#1f2937;--gray-900:#111827;--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif}
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:var(--font-body);background:var(--cream);color:var(--gray-800);line-height:1.6}
-    nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px)}
-    .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-    .logo{display:flex;align-items:center;text-decoration:none}
-    .logo img{height:32px;width:auto}
-    .nav-links{display:flex;gap:2rem;align-items:center}
-    .nav-links a{text-decoration:none;color:var(--gray-600);font-weight:500}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.875rem 1.75rem;border-radius:100px;font-weight:600;text-decoration:none;border:none}
-    .btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff}
-    .btn-sm{padding:.625rem 1.25rem;font-size:.875rem}
-    .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 2rem 4rem}
-    .hero-content{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
-    .hero h1{font-family:var(--font-display);font-size:4rem;font-weight:700;line-height:1.1;margin-bottom:1.5rem;color:var(--gray-900)}
-    .hero h1 .highlight{background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero p{font-size:1.25rem;color:var(--gray-600);margin-bottom:2rem;max-width:500px}
-    .mobile-menu-btn{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer}
-    @media(max-width:1024px){.hero-content{grid-template-columns:1fr;text-align:center}.hero h1{font-size:2.5rem}.hero p{margin:0 auto 2rem}}
-    @media(max-width:768px){.nav-links{display:none}.mobile-menu-btn{display:block}}
-  </style>
-
-  <!-- CSS não-crítico carregado de forma assíncrona -->
-  <link rel="preload" href="css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
   <style>
     /* Hero Section */
     .hero {
@@ -457,7 +425,7 @@
         <a href="eventos.html">Eventos</a>
         <a href="sobre.html">Sobre</a>
         <a href="precos.html">Preços</a>
-        <a href="/app/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-sm">Começar Grátis</a>
       </div>
     </div>
   </nav>
@@ -479,7 +447,7 @@
           Perfeito para casamentos, aniversários e eventos corporativos.
         </p>
         <div class="hero-buttons">
-          <a href="/app/register" class="btn btn-primary">
+          <a href="http://localhost:3000/register" class="btn btn-primary">
             Começar Gratuitamente
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -730,7 +698,7 @@
         o jeito mais fácil de confirmar presenças.
       </p>
       <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <a href="/app/register" class="btn btn-secondary">
+        <a href="http://localhost:3000/register" class="btn btn-secondary">
           Criar Conta Grátis
           <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -788,15 +756,6 @@
     </div>
   </footer>
 
-  <script src="js/main.js" defer></script>
-
-  <!-- Carregar confetti após o carregamento inicial -->
-  <script>
-    window.addEventListener('load', function() {
-      document.querySelectorAll('.confetti').forEach(function(el) {
-        el.style.animationPlayState = 'running';
-      });
-    });
-  </script>
+  <script src="js/main.js"></script>
 </body>
 </html>

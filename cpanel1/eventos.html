@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tipos de Eventos - Confirma.Party</title>
+  <meta name="description" content="Confirma.Party é perfeito para aniversários, casamentos e eventos corporativos. Conheça as soluções para cada tipo de celebração.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Event Hero */
+    .event-hero {
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .event-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+    }
+
+    .event-hero.aniversario { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+    .event-hero.casamento { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+    .event-hero.corporativo { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+
+    .event-hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .event-hero-text h1 {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 1.5rem;
+    }
+
+    .event-hero-text p {
+      font-size: 1.25rem;
+      color: var(--gray-700);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .event-emoji {
+      font-size: 12rem;
+      text-align: center;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    }
+
+    /* Features for each event */
+    .event-features-section { background: white; }
+
+    .event-features-grid {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .event-feature-card {
+      background: var(--gray-50);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .event-feature-card:hover {
+      background: white;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .event-feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .aniversario .event-feature-icon { background: linear-gradient(135deg, #fce7f3, #f9a8d4); }
+    .casamento .event-feature-icon { background: linear-gradient(135deg, #fef3c7, #fcd34d); }
+    .corporativo .event-feature-icon { background: linear-gradient(135deg, #dbeafe, #93c5fd); }
+
+    .event-feature-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .event-feature-desc {
+      color: var(--gray-600);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* Use Cases */
+    .use-cases {
+      background: var(--cream);
+    }
+
+    .use-cases-grid {
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .use-case {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .use-case-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .use-case-text {
+      font-weight: 500;
+      color: var(--gray-700);
+    }
+
+    /* Event CTA */
+    .event-cta {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .event-cta.aniversario { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .event-cta.casamento { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .event-cta.corporativo { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+
+    .event-cta h2 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .event-cta p {
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Navigation between events */
+    .event-nav {
+      background: white;
+      padding: 2rem;
+      position: sticky;
+      top: 70px;
+      z-index: 100;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .event-nav-links {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .event-nav-link {
+      padding: 0.75rem 1.5rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 600;
+      color: var(--gray-600);
+      background: var(--gray-100);
+      transition: all 0.3s;
+    }
+
+    .event-nav-link:hover { background: var(--gray-200); }
+    .event-nav-link.active { background: linear-gradient(135deg, var(--pink), var(--purple)); color: white; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .event-hero-content { grid-template-columns: 1fr; text-align: center; }
+      .event-hero-text h1 { font-size: 2.5rem; }
+      .event-emoji { font-size: 8rem; }
+      .event-features-grid { grid-template-columns: 1fr; }
+      .event-nav-links { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Confetti -->
+  <div class="confetti-container">
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="images/logo.svg" alt="confirma.party"></a>
+      <button class="mobile-menu-btn">☰</button>
+      <div class="nav-links">
+        <a href="como-funciona.html">Como Funciona</a>
+        <a href="eventos.html" class="active">Eventos</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="precos.html">Preços</a>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Event Navigation -->
+  <div class="event-nav">
+    <div class="event-nav-links">
+      <a href="#aniversario" class="event-nav-link active">🎂 Aniversários</a>
+      <a href="#casamento" class="event-nav-link">💒 Casamentos</a>
+      <a href="#corporativo" class="event-nav-link">🏢 Corporativos</a>
+    </div>
+  </div>
+
+  <!-- ANIVERSÁRIOS -->
+  <section id="aniversario" class="event-hero aniversario">
+    <div class="event-hero-content">
+      <div class="event-hero-text fade-in">
+        <h1>Aniversários inesquecíveis</h1>
+        <p>
+          De festas infantis a comemorações de 15 anos, 50 anos ou qualquer idade especial.
+          Nossa IA cria mensagens divertidas e únicas que combinam com o aniversariante.
+        </p>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-lg">Criar festa de aniversário</a>
+      </div>
+      <div class="event-emoji fade-in">🎂</div>
+    </div>
+  </section>
+
+  <section class="event-features-section aniversario">
+    <div class="section-header fade-in">
+      <h2 class="section-title">Funcionalidades para Aniversários</h2>
+      <p class="section-subtitle">Tudo que você precisa para uma festa perfeita</p>
+    </div>
+    <div class="event-features-grid">
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">🎈</div>
+        <h3 class="event-feature-title">Temas Personalizados</h3>
+        <p class="event-feature-desc">A IA adapta o tom da mensagem para festas infantis, teens ou adultos.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">📍</div>
+        <h3 class="event-feature-title">Informações do Local</h3>
+        <p class="event-feature-desc">Inclua endereço, mapa e instruções de como chegar automaticamente.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">🎁</div>
+        <h3 class="event-feature-title">Lista de Presentes</h3>
+        <p class="event-feature-desc">Integre sua lista de presentes ou chave PIX para contribuições.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">👶</div>
+        <h3 class="event-feature-title">Confirmação com Crianças</h3>
+        <p class="event-feature-desc">Pergunte se o convidado levará filhos para organizar o espaço kids.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="use-cases">
+    <div class="section-header fade-in">
+      <h2 class="section-title">Ideal para</h2>
+    </div>
+    <div class="use-cases-grid">
+      <div class="use-case fade-in"><span class="use-case-icon">👶</span><span class="use-case-text">Festas infantis e de 1 aninho</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🎀</span><span class="use-case-text">Festas de 15 anos</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🎊</span><span class="use-case-text">Festas surpresa</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🥳</span><span class="use-case-text">Aniversários de adultos</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">👴</span><span class="use-case-text">Bodas e aniversários especiais (50, 60, 70...)</span></div>
+    </div>
+  </section>
+
+  <div class="event-cta aniversario fade-in">
+    <h2>Pronto para a festa?</h2>
+    <p>Crie sua festa de aniversário em menos de 5 minutos</p>
+    <a href="http://localhost:3000/register" class="btn btn-secondary">Começar agora</a>
+  </div>
+
+  <!-- CASAMENTOS -->
+  <section id="casamento" class="event-hero casamento">
+    <div class="event-hero-content">
+      <div class="event-hero-text fade-in">
+        <h1>O grande dia merece perfeição</h1>
+        <p>
+          Casamentos exigem organização impecável. Gerencie padrinhos, familiares,
+          amigos e colegas em um só lugar. Mensagens elegantes que combinam com a ocasião.
+        </p>
+        <a href="http://localhost:3000/register" class="btn btn-gold btn-lg">Criar convite de casamento</a>
+      </div>
+      <div class="event-emoji fade-in">💒</div>
+    </div>
+  </section>
+
+  <section class="event-features-section casamento">
+    <div class="section-header fade-in">
+      <h2 class="section-title">Funcionalidades para Casamentos</h2>
+      <p class="section-subtitle">Organização completa do seu grande dia</p>
+    </div>
+    <div class="event-features-grid">
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">💍</div>
+        <h3 class="event-feature-title">Mensagens Elegantes</h3>
+        <p class="event-feature-desc">A IA cria convites formais e sofisticados dignos da ocasião.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">👥</div>
+        <h3 class="event-feature-title">Grupos de Convidados</h3>
+        <p class="event-feature-desc">Separe por padrinhos, família da noiva, família do noivo, amigos.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">🍽️</div>
+        <h3 class="event-feature-title">Restrições Alimentares</h3>
+        <p class="event-feature-desc">Pergunte sobre vegetarianos, veganos, alergias e intolerâncias.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">🚗</div>
+        <h3 class="event-feature-title">Transporte e Hospedagem</h3>
+        <p class="event-feature-desc">Colete informações sobre necessidade de transporte ou hotel.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="use-cases">
+    <div class="section-header fade-in">
+      <h2 class="section-title">Ideal para</h2>
+    </div>
+    <div class="use-cases-grid">
+      <div class="use-case fade-in"><span class="use-case-icon">💒</span><span class="use-case-text">Casamentos tradicionais</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🏖️</span><span class="use-case-text">Destination weddings</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🎭</span><span class="use-case-text">Casamentos temáticos</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">👰</span><span class="use-case-text">Chás de lingerie e panela</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🎊</span><span class="use-case-text">Despedidas de solteiro(a)</span></div>
+    </div>
+  </section>
+
+  <div class="event-cta casamento fade-in">
+    <h2>O sim mais organizado da sua vida</h2>
+    <p>Comece a organizar seu casamento dos sonhos</p>
+    <a href="http://localhost:3000/register" class="btn btn-secondary">Começar agora</a>
+  </div>
+
+  <!-- CORPORATIVOS -->
+  <section id="corporativo" class="event-hero corporativo">
+    <div class="event-hero-content">
+      <div class="event-hero-text fade-in">
+        <h1>Eventos corporativos profissionais</h1>
+        <p>
+          Confraternizações, workshops, lançamentos, convenções.
+          Comunicação profissional com colaboradores, clientes e parceiros.
+        </p>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">Criar evento corporativo</a>
+      </div>
+      <div class="event-emoji fade-in">🏢</div>
+    </div>
+  </section>
+
+  <section class="event-features-section corporativo">
+    <div class="section-header fade-in">
+      <h2 class="section-title">Funcionalidades para Empresas</h2>
+      <p class="section-subtitle">Profissionalismo em cada detalhe</p>
+    </div>
+    <div class="event-features-grid">
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">📊</div>
+        <h3 class="event-feature-title">Relatórios Detalhados</h3>
+        <p class="event-feature-desc">Exporte dados de confirmação para RH, financeiro ou diretoria.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">🏷️</div>
+        <h3 class="event-feature-title">Segmentação por Área</h3>
+        <p class="event-feature-desc">Organize convidados por departamento, filial ou cargo.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">📧</div>
+        <h3 class="event-feature-title">Tom Corporativo</h3>
+        <p class="event-feature-desc">Mensagens profissionais adequadas ao ambiente empresarial.</p>
+      </div>
+      <div class="event-feature-card fade-in">
+        <div class="event-feature-icon">🔗</div>
+        <h3 class="event-feature-title">Integração com CRM</h3>
+        <p class="event-feature-desc">Conecte com seu sistema de gestão via API (plano empresarial).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="use-cases">
+    <div class="section-header fade-in">
+      <h2 class="section-title">Ideal para</h2>
+    </div>
+    <div class="use-cases-grid">
+      <div class="use-case fade-in"><span class="use-case-icon">🎄</span><span class="use-case-text">Confraternizações de fim de ano</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">📚</span><span class="use-case-text">Workshops e treinamentos</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🚀</span><span class="use-case-text">Lançamentos de produtos</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🎤</span><span class="use-case-text">Convenções e palestras</span></div>
+      <div class="use-case fade-in"><span class="use-case-icon">🤝</span><span class="use-case-text">Eventos para clientes VIP</span></div>
+    </div>
+  </section>
+
+  <div class="event-cta corporativo fade-in">
+    <h2>Eleve seus eventos corporativos</h2>
+    <p>Profissionalismo que impressiona colaboradores e clientes</p>
+    <a href="http://localhost:3000/register" class="btn btn-secondary">Começar agora</a>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo"><img src="images/logo-white.svg" alt="confirma.party"></div>
+        <p class="footer-desc">A maneira mais inteligente de gerenciar confirmações de presença.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Produto</h4>
+        <ul class="footer-links">
+          <li><a href="como-funciona.html">Como Funciona</a></li>
+          <li><a href="eventos.html">Eventos</a></li>
+          <li><a href="precos.html">Preços</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Empresa</h4>
+        <ul class="footer-links">
+          <li><a href="sobre.html">Sobre</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contato.html">Contato</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="termos.html">Termos de Uso</a></li>
+          <li><a href="privacidade.html">Privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2024 Confirma.Party. Todos os direitos reservados.</div>
+      <div class="footer-social">
+        <a href="https://instagram.com/confirmaparty" target="_blank" rel="noopener" title="Instagram">📸</a>
+        <a href="https://twitter.com/confirmaparty" target="_blank" rel="noopener" title="Twitter">🐦</a>
+        <a href="https://linkedin.com/company/confirmaparty" target="_blank" rel="noopener" title="LinkedIn">💼</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Event nav active state on scroll
+    const sections = document.querySelectorAll('.event-hero');
+    const navLinks = document.querySelectorAll('.event-nav-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 150;
+        if (scrollY >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

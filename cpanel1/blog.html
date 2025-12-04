@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Confirma.Party</title>
+  <meta name="description" content="Dicas, novidades e insights sobre organização de eventos e festas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .blog-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .blog-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .blog-image {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+
+    .blog-card:nth-child(1) .blog-image { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+    .blog-card:nth-child(2) .blog-image { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+    .blog-card:nth-child(3) .blog-image { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+    .blog-card:nth-child(4) .blog-image { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+    .blog-card:nth-child(5) .blog-image { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+    .blog-card:nth-child(6) .blog-image { background: linear-gradient(135deg, #fee2e2, #fecaca); }
+
+    .blog-content {
+      padding: 1.5rem;
+    }
+
+    .blog-category {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+      color: var(--pink);
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .blog-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .blog-excerpt {
+      color: var(--gray-600);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .blog-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--gray-500);
+      font-size: 0.875rem;
+    }
+
+    .coming-soon-banner {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+      text-align: center;
+      padding: 3rem 2rem;
+      border-radius: 24px;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+    }
+
+    .coming-soon-banner h2 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .coming-soon-banner p {
+      opacity: 0.9;
+      margin-bottom: 1.5rem;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      padding: 0.875rem 1rem;
+      border: none;
+      border-radius: 100px;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+      .blog-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .blog-grid { grid-template-columns: 1fr; }
+      .newsletter-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="confetti-container">
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+    <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+  </div>
+
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><img src="images/logo.svg" alt="confirma.party"></a>
+      <button class="mobile-menu-btn">☰</button>
+      <div class="nav-links">
+        <a href="como-funciona.html">Como Funciona</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="precos.html">Preços</a>
+        <a href="http://localhost:3000/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="section-badge fade-in">Blog</div>
+    <h1 class="section-title fade-in">Dicas e Novidades</h1>
+    <p class="section-subtitle fade-in">Insights sobre organização de eventos, tendências e muito mais</p>
+  </header>
+
+  <section style="background: white;">
+    <div class="coming-soon-banner fade-in">
+      <h2>Em breve mais conteúdo!</h2>
+      <p>Estamos preparando artigos incríveis sobre organização de eventos. Inscreva-se para ser notificado:</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Inscrito com sucesso!');">
+        <input type="email" class="newsletter-input" placeholder="Seu email" required>
+        <button type="submit" class="btn btn-secondary">Inscrever</button>
+      </form>
+    </div>
+
+    <div class="blog-grid">
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-image">📋</div>
+        <div class="blog-content">
+          <span class="blog-category">Dicas</span>
+          <h3 class="blog-title">Como organizar a lista de convidados perfeita</h3>
+          <p class="blog-excerpt">Aprenda a criar e gerenciar sua lista de convidados sem estresse.</p>
+          <div class="blog-meta">
+            <span>5 min de leitura</span>
+            <span>Dez 2024</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-image">🤖</div>
+        <div class="blog-content">
+          <span class="blog-category">Tecnologia</span>
+          <h3 class="blog-title">IA nos eventos: o futuro da organização</h3>
+          <p class="blog-excerpt">Como a inteligência artificial está revolucionando a forma de organizar festas.</p>
+          <div class="blog-meta">
+            <span>7 min de leitura</span>
+            <span>Dez 2024</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-image">💒</div>
+        <div class="blog-content">
+          <span class="blog-category">Casamento</span>
+          <h3 class="blog-title">Checklist completo para casamentos</h3>
+          <p class="blog-excerpt">Tudo o que você precisa verificar para o grande dia.</p>
+          <div class="blog-meta">
+            <span>10 min de leitura</span>
+            <span>Nov 2024</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-image">🎂</div>
+        <div class="blog-content">
+          <span class="blog-category">Aniversário</span>
+          <h3 class="blog-title">Festas infantis: ideias criativas</h3>
+          <p class="blog-excerpt">Temas, decorações e atividades para festas inesquecíveis.</p>
+          <div class="blog-meta">
+            <span>6 min de leitura</span>
+            <span>Nov 2024</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-image">🏢</div>
+        <div class="blog-content">
+          <span class="blog-category">Corporativo</span>
+          <h3 class="blog-title">Eventos corporativos que engajam</h3>
+          <p class="blog-excerpt">Como criar experiências memoráveis para colaboradores.</p>
+          <div class="blog-meta">
+            <span>8 min de leitura</span>
+            <span>Out 2024</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-image">💬</div>
+        <div class="blog-content">
+          <span class="blog-category">WhatsApp</span>
+          <h3 class="blog-title">Etiqueta de convites por WhatsApp</h3>
+          <p class="blog-excerpt">O que fazer e evitar ao enviar convites pelo WhatsApp.</p>
+          <div class="blog-meta">
+            <span>4 min de leitura</span>
+            <span>Out 2024</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo"><img src="images/logo-white.svg" alt="confirma.party"></div>
+        <p class="footer-desc">A maneira mais inteligente de gerenciar confirmações de presença.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Produto</h4>
+        <ul class="footer-links">
+          <li><a href="como-funciona.html">Como Funciona</a></li>
+          <li><a href="eventos.html">Eventos</a></li>
+          <li><a href="precos.html">Preços</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Empresa</h4>
+        <ul class="footer-links">
+          <li><a href="sobre.html">Sobre</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contato.html">Contato</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="termos.html">Termos de Uso</a></li>
+          <li><a href="privacidade.html">Privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2024 Confirma.Party. Todos os direitos reservados.</div>
+      <div class="footer-social">
+        <a href="https://instagram.com/confirmaparty" target="_blank" rel="noopener">📸</a>
+        <a href="https://twitter.com/confirmaparty" target="_blank" rel="noopener">🐦</a>
+        <a href="https://linkedin.com/company/confirmaparty" target="_blank" rel="noopener">💼</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

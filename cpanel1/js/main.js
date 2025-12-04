@@ -1,6 +1,3 @@
-// Ativar animações após carregamento (melhora FCP)
-document.body.classList.add('js-loaded');
-
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
