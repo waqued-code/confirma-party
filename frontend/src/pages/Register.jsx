@@ -19,6 +19,7 @@ import {
   Lock as LockIcon,
   Person as PersonIcon,
   Phone as PhoneIcon,
+  ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -67,33 +68,50 @@ export default function Register() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
         p: 2,
+        position: 'relative',
       }}
     >
-      <Card sx={{ maxWidth: 420, width: '100%' }}>
+      {/* Link para voltar à landing */}
+      <Box
+        component="a"
+        href="/"
+        sx={{
+          position: 'absolute',
+          top: 24,
+          left: 24,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          color: 'white',
+          textDecoration: 'none',
+          fontSize: '0.875rem',
+          fontWeight: 500,
+          opacity: 0.9,
+          '&:hover': { opacity: 1 },
+        }}
+      >
+        <ArrowBackIcon fontSize="small" />
+        Voltar ao site
+      </Box>
+
+      <Card sx={{ maxWidth: 420, width: '100%', borderRadius: 3 }}>
         <CardContent sx={{ p: 4 }}>
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                background: 'linear-gradient(45deg, #6366f1, #ec4899)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                color: 'transparent',
-                mb: 1,
-              }}
-            >
-              Confirma.Party
-            </Typography>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
+            <Box
+              component="img"
+              src="/app/logo.svg"
+              alt="Confirma.Party"
+              sx={{ height: 40, mb: 2 }}
+            />
             <Typography color="text.secondary">
-              Crie sua conta
+              Crie sua conta grátis
             </Typography>
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
+            <Alert severity="error" sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
@@ -104,7 +122,7 @@ export default function Register() {
               label="Nome completo"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              margin="normal"
+              margin="dense"
               required
               InputProps={{
                 startAdornment: (
@@ -121,7 +139,7 @@ export default function Register() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              margin="normal"
+              margin="dense"
               required
               InputProps={{
                 startAdornment: (
@@ -137,7 +155,7 @@ export default function Register() {
               label="Telefone (opcional)"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              margin="normal"
+              margin="dense"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -153,7 +171,7 @@ export default function Register() {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              margin="normal"
+              margin="dense"
               required
               InputProps={{
                 startAdornment: (
@@ -166,6 +184,7 @@ export default function Register() {
                     <IconButton
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
+                      size="small"
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -180,7 +199,7 @@ export default function Register() {
               type={showPassword ? 'text' : 'password'}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              margin="normal"
+              margin="dense"
               required
               InputProps={{
                 startAdornment: (
@@ -197,15 +216,28 @@ export default function Register() {
               variant="contained"
               size="large"
               disabled={loading}
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+                borderRadius: '100px',
+                py: 1.5,
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #db2777, #7c3aed)',
+                },
+              }}
             >
-              {loading ? 'Criando conta...' : 'Criar conta'}
+              {loading ? 'Criando conta...' : 'Criar conta grátis'}
             </Button>
           </form>
 
           <Typography align="center" color="text.secondary">
             Já tem uma conta?{' '}
-            <Link component={RouterLink} to="/login">
+            <Link
+              component={RouterLink}
+              to="/login"
+              sx={{ color: '#ec4899', fontWeight: 600 }}
+            >
               Faça login
             </Link>
           </Typography>
