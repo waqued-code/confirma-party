@@ -14,7 +14,14 @@ const prisma = new PrismaClient();
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://confirma.party',
+    'http://confirma.party',
+    'http://localhost:3000'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
