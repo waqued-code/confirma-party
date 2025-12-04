@@ -32,6 +32,9 @@ Thumbs.db
 
 # Deploy packages (can regenerate)
 deploy/*.zip
+*.zip
+cpanel1/
+URLnova/
 
 # Prisma
 backend/prisma/*.db
