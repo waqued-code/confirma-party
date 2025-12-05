@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+const telegramService = require('../services/telegram.service');
 
 const prisma = new PrismaClient();
 
@@ -44,6 +45,11 @@ exports.register = async (req, res) => {
     });
 
     const token = generateToken(user.id);
+
+    // Send Telegram notification (async, don't wait)
+    telegramService.sendNewUserNotification(user).catch(err => {
+      console.error('Failed to send Telegram notification:', err.message);
+    });
 
     res.status(201).json({
       message: 'Usuário criado com sucesso',
