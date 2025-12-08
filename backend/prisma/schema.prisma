@@ -19,18 +19,21 @@ model User {
 }
 
 model Party {
-  id                String   @id @default(uuid())
+  id                String     @id @default(uuid())
   name              String
   date              DateTime
-  contactDate       DateTime // Data para começar a entrar em contato
-  partyType         String   // Casamento, Aniversário, Corporativo, etc.
+  contactDate       DateTime   // Data para começar a entrar em contato
+  partyType         String     // Casamento, Aniversário, Corporativo, etc.
   observations      String?
-  inviteMessage     String?  // Mensagem gerada pela IA
+  inviteMessage     String?    // Mensagem gerada pela IA
+  plan              PartyPlan  @default(GRATUITO)
+  guestLimit        Int        @default(15) // Limite de famílias
   userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   guests            Guest[]
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  payments          Payment[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
 }
 
 enum GuestStatus {
@@ -43,6 +46,20 @@ enum GuestStatus {
 enum ContactMethod {
   WHATSAPP
   LIGACAO
+}
+
+enum PartyPlan {
+  GRATUITO      // 15 famílias
+  FESTA         // 50 famílias - R$37
+  CELEBRACAO    // 150 famílias - R$77
+  PERSONALIZADO // Ilimitado - sob consulta
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }
 
 model Guest {
@@ -67,4 +84,17 @@ model Message {
   guestId   String
   guest     Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  amount          Int           // Valor em centavos (3700 = R$37,00)
+  status          PaymentStatus @default(PENDING)
+  plan            PartyPlan     // Plano sendo comprado
+  paymentMethod   String?       // pix, credit_card, etc
+  externalId      String?       // ID da transação no gateway (Stripe, etc)
+  partyId         String
+  party           Party         @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }

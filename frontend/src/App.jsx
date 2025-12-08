@@ -9,6 +9,7 @@ import CreateParty from './pages/CreateParty';
 import PartyDetails from './pages/PartyDetails';
 import PartyDashboard from './pages/PartyDashboard';
 import WhatsAppSettings from './pages/WhatsAppSettings';
+import PaymentSuccess from './pages/PaymentSuccess';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -64,6 +65,7 @@ function App() {
         <Route path="parties/:id" element={<PartyDetails />} />
         <Route path="parties/:id/dashboard" element={<PartyDashboard />} />
         <Route path="whatsapp" element={<WhatsAppSettings />} />
+        <Route path="app/payment/success" element={<PaymentSuccess />} />
       </Route>
     </Routes>
   );

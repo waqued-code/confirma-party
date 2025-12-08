@@ -9,6 +9,8 @@ const guestRoutes = require('./routes/guest.routes');
 const aiRoutes = require('./routes/ai.routes');
 const whatsappRoutes = require('./routes/whatsapp.routes');
 const webhookRoutes = require('./routes/webhook.routes');
+const paymentRoutes = require('./routes/payment.routes');
+const paymentController = require('./controllers/payment.controller');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -22,6 +24,13 @@ app.use(cors({
   ],
   credentials: true
 }));
+
+// Stripe webhook precisa do raw body (ANTES do express.json())
+app.post('/api/payments/webhook/stripe',
+  express.raw({ type: 'application/json' }),
+  paymentController.stripeWebhook
+);
+
 app.use(express.json());
 
 // Routes
@@ -31,6 +40,7 @@ app.use('/api/guests', guestRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/webhook', webhookRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

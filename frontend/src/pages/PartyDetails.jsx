@@ -43,6 +43,7 @@ import {
 } from '@mui/icons-material';
 import { partyService } from '../services/party.service';
 import { guestService } from '../services/guest.service';
+import UpgradeDialog from '../components/UpgradeDialog';
 
 const statusConfig = {
   NAO_RESPONDEU: { label: 'Aguardando', color: '#f59e0b', bgColor: '#fef3c7', icon: '⏳' },
@@ -72,6 +73,7 @@ export default function PartyDetails() {
   const [messageDialog, setMessageDialog] = useState(false);
   const [addGuestDialog, setAddGuestDialog] = useState(false);
   const [regenerateDialog, setRegenerateDialog] = useState(false);
+  const [upgradeDialog, setUpgradeDialog] = useState(false);
 
   // Form states
   const [newGuests, setNewGuests] = useState([{ name: '', phone: '', contactMethod: 'WHATSAPP' }]);
@@ -111,11 +113,16 @@ export default function PartyDetails() {
       setSnackbar({ open: true, message: response.data.message, severity: 'success' });
       loadParty();
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.error || 'Erro ao importar convidados',
-        severity: 'error',
-      });
+      const errorCode = error.response?.data?.error;
+      if (errorCode === 'PLAN_LIMIT_EXCEEDED' || errorCode === 'PLAN_LIMIT_REACHED') {
+        setUpgradeDialog(true);
+      } else {
+        setSnackbar({
+          open: true,
+          message: error.response?.data?.message || error.response?.data?.error || 'Erro ao importar convidados',
+          severity: 'error',
+        });
+      }
     } finally {
       setUploadingFile(false);
     }
@@ -234,11 +241,17 @@ export default function PartyDetails() {
       setNewGuests([{ name: '', phone: '', contactMethod: 'WHATSAPP' }]);
       loadParty();
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.error || 'Erro ao adicionar convidado',
-        severity: 'error',
-      });
+      const errorCode = error.response?.data?.error;
+      if (errorCode === 'PLAN_LIMIT_REACHED' || errorCode === 'PLAN_LIMIT_EXCEEDED') {
+        setAddGuestDialog(false);
+        setUpgradeDialog(true);
+      } else {
+        setSnackbar({
+          open: true,
+          message: error.response?.data?.message || error.response?.data?.error || 'Erro ao adicionar convidado',
+          severity: 'error',
+        });
+      }
     }
   };
 
@@ -323,7 +336,7 @@ export default function PartyDetails() {
           >
             {party.name}
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
             <Chip
               label={party.partyType}
               size="small"
@@ -338,6 +351,21 @@ export default function PartyDetails() {
             <Typography variant="body2" color="text.secondary">
               📅 {new Date(party.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
             </Typography>
+            <Chip
+              label={`${party.guests?.length || 0}/${party.guestLimit || 15} famílias`}
+              size="small"
+              onClick={() => setUpgradeDialog(true)}
+              sx={{
+                bgcolor: (party.guests?.length || 0) >= (party.guestLimit || 15) ? '#fee2e2' : '#dcfce7',
+                color: (party.guests?.length || 0) >= (party.guestLimit || 15) ? '#dc2626' : '#16a34a',
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                '&:hover': {
+                  bgcolor: (party.guests?.length || 0) >= (party.guestLimit || 15) ? '#fecaca' : '#bbf7d0',
+                }
+              }}
+            />
           </Box>
         </Box>
         <Button
@@ -997,6 +1025,17 @@ export default function PartyDetails() {
           </Box>
         </DialogActions>
       </Dialog>
+
+      {/* Upgrade Dialog */}
+      <UpgradeDialog
+        open={upgradeDialog}
+        onClose={() => setUpgradeDialog(false)}
+        party={party}
+        onSuccess={() => {
+          setUpgradeDialog(false);
+          loadParty();
+        }}
+      />
 
       {/* Snackbar */}
       <Snackbar

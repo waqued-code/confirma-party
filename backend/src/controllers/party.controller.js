@@ -97,7 +97,14 @@ exports.getById = async (req, res) => {
       necessitaConversar: party.guests.filter(g => g.status === 'NECESSITA_CONVERSAR').length
     };
 
-    res.json({ ...party, stats });
+    const planInfo = {
+      plan: party.plan,
+      guestLimit: party.guestLimit,
+      guestCount: party.guests.length,
+      availableSlots: party.guestLimit - party.guests.length
+    };
+
+    res.json({ ...party, stats, planInfo });
   } catch (error) {
     console.error('Erro ao buscar festa:', error);
     res.status(500).json({ error: 'Erro ao buscar festa' });
@@ -167,7 +174,10 @@ exports.uploadGuests = async (req, res) => {
     const { id } = req.params;
 
     const party = await prisma.party.findFirst({
-      where: { id, userId: req.user.id }
+      where: { id, userId: req.user.id },
+      include: {
+        _count: { select: { guests: true } }
+      }
     });
 
     if (!party) {
@@ -176,6 +186,20 @@ exports.uploadGuests = async (req, res) => {
 
     if (!req.file) {
       return res.status(400).json({ error: 'Arquivo não fornecido' });
+    }
+
+    // Verificar limite do plano
+    const currentGuestCount = party._count.guests;
+    const availableSlots = party.guestLimit - currentGuestCount;
+
+    if (availableSlots <= 0) {
+      return res.status(403).json({
+        error: 'PLAN_LIMIT_REACHED',
+        message: 'Limite de convidados atingido',
+        currentPlan: party.plan,
+        guestLimit: party.guestLimit,
+        currentCount: currentGuestCount
+      });
     }
 
     const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
@@ -187,7 +211,7 @@ exports.uploadGuests = async (req, res) => {
       return res.status(400).json({ error: 'Planilha vazia' });
     }
 
-    const guests = data.map(row => {
+    let guests = data.map(row => {
       const name = row.nome || row.Nome || row.NOME || row.name || row.Name;
       const phone = String(row.telefone || row.Telefone || row.TELEFONE || row.phone || row.Phone || row.celular || row.Celular || '').replace(/\D/g, '');
       const contactMethod = (row.contato || row.Contato || row.metodo || 'WHATSAPP').toUpperCase().includes('LIGA') ? 'LIGACAO' : 'WHATSAPP';
@@ -201,6 +225,19 @@ exports.uploadGuests = async (req, res) => {
       });
     }
 
+    // Verificar se a planilha excede o limite
+    if (guests.length > availableSlots) {
+      return res.status(403).json({
+        error: 'PLAN_LIMIT_EXCEEDED',
+        message: `Sua planilha tem ${guests.length} convidados, mas você só pode adicionar mais ${availableSlots}`,
+        currentPlan: party.plan,
+        guestLimit: party.guestLimit,
+        currentCount: currentGuestCount,
+        availableSlots: availableSlots,
+        fileGuestCount: guests.length
+      });
+    }
+
     const createdGuests = await prisma.guest.createMany({
       data: guests,
       skipDuplicates: true
@@ -208,7 +245,9 @@ exports.uploadGuests = async (req, res) => {
 
     res.status(201).json({
       message: `${createdGuests.count} convidados importados com sucesso`,
-      count: createdGuests.count
+      count: createdGuests.count,
+      guestCount: currentGuestCount + createdGuests.count,
+      guestLimit: party.guestLimit
     });
   } catch (error) {
     console.error('Erro ao importar convidados:', error);

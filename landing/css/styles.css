@@ -145,11 +145,19 @@ nav.scrolled {
   color: var(--pink);
 }
 
-.nav-links a.btn {
+.nav-links a.btn.btn-primary {
   color: white;
 }
 
-.nav-links a.btn:hover {
+.nav-links a.btn.btn-primary:hover {
+  color: white;
+}
+
+.nav-links a.btn.btn-outline {
+  color: var(--pink);
+}
+
+.nav-links a.btn.btn-outline:hover {
   color: white;
 }
 
@@ -489,6 +497,16 @@ footer {
 
   .nav-links.active {
     display: flex;
+  }
+
+  .nav-links a.btn.btn-outline {
+    color: var(--pink) !important;
+    border-color: var(--pink);
+  }
+
+  .nav-links a.btn.btn-outline:hover {
+    color: white !important;
+    background: var(--pink);
   }
 
   .mobile-menu-btn {

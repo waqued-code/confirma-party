@@ -152,10 +152,12 @@ export default function Register() {
 
             <TextField
               fullWidth
-              label="Telefone (opcional)"
+              label="Celular"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               margin="dense"
+              required
+              placeholder="(11) 99999-9999"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

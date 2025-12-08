@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17782351592"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-17782351592');
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>API - Confirma.Party</title>
@@ -166,7 +175,7 @@
       .api-features { grid-template-columns: 1fr; }
       .api-hero h1 { font-size: 2.5rem; }
     }
-  </style>
+    .login-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:2000;justify-content:center;align-items:center;padding:1rem}.login-modal-overlay.active{display:flex;animation:fadeIn 0.3s ease}.login-modal{background:white;border-radius:24px;width:100%;max-width:420px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;animation:slideUp 0.3s ease}.login-modal-header{background:linear-gradient(135deg,#ec4899,#8b5cf6);padding:2rem;border-radius:24px 24px 0 0;text-align:center;color:white}.login-modal-header img{height:40px;margin-bottom:1rem}.login-modal-header h2{font-family:var(--font-display);font-size:1.5rem;margin-bottom:0.25rem}.login-modal-header p{opacity:0.9;font-size:0.9375rem}.login-modal-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.2);border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:white;transition:background 0.2s}.login-modal-close:hover{background:rgba(255,255,255,0.3)}.login-modal-body{padding:2rem}.login-form-group{margin-bottom:1.25rem}.login-form-group label{display:block;font-weight:600;color:var(--gray-700);margin-bottom:0.5rem;font-size:0.875rem}.login-form-group input{width:100%;padding:0.875rem 1rem;border:1px solid var(--gray-200);border-radius:12px;font-size:1rem;transition:border-color 0.2s,box-shadow 0.2s;font-family:var(--font-body);box-sizing:border-box}.login-form-group input:focus{outline:none;border-color:#ec4899;box-shadow:0 0 0 3px rgba(236,72,153,0.1)}.login-form-group input::placeholder{color:var(--gray-400)}.login-submit{width:100%;padding:1rem;background:linear-gradient(135deg,#ec4899,#8b5cf6);color:white;border:none;border-radius:100px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;font-family:var(--font-body)}.login-submit:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(236,72,153,0.3)}.login-submit:disabled{opacity:0.7;cursor:not-allowed;transform:none}.login-modal-footer{text-align:center;padding:1.5rem 2rem;border-top:1px solid var(--gray-100);color:var(--gray-600);font-size:0.9375rem}.login-modal-footer a{color:#ec4899;font-weight:600;text-decoration:none}.login-modal-footer a:hover{text-decoration:underline}.login-error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:0.75rem 1rem;border-radius:12px;font-size:0.875rem;margin-bottom:1rem;display:none}.login-error.active{display:block}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}</style>
 </head>
 <body>
   <nav id="navbar">
@@ -178,7 +187,8 @@
         <a href="eventos.html">Eventos</a>
         <a href="sobre.html">Sobre</a>
         <a href="precos.html">Preços</a>
-        <a href="/app/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+        <a href="#" class="btn btn-outline btn-sm" onclick="openLoginModal(); return false;">Login</a>
+        <a href="#" class="btn btn-primary btn-sm" onclick="openRegisterModal(); return false;">Começar Grátis</a>
       </div>
     </div>
   </nav>
@@ -315,6 +325,68 @@
     </div>
   </section>
 
+  
+  <div class="login-modal-overlay" id="loginModal">
+    <div class="login-modal">
+      <button class="login-modal-close" onclick="closeLoginModal()">&times;</button>
+      <div class="login-modal-header">
+        <img src="images/logo-white.svg" alt="confirma.party">
+        <h2>Bem-vindo de volta!</h2>
+        <p>Entre para acessar seu painel</p>
+      </div>
+      <div class="login-modal-body">
+        <div class="login-error" id="loginError">Email ou senha incorretos.</div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="login-form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" name="email" placeholder="seu@email.com" required>
+          </div>
+          <div class="login-form-group">
+            <label for="loginPassword">Senha</label>
+            <input type="password" id="loginPassword" name="password" placeholder="Digite sua senha" required>
+          </div>
+          <button type="submit" class="login-submit">Entrar</button>
+        </form>
+      </div>
+      <div class="login-modal-footer">Ainda nao tem conta? <a href="#" onclick="closeLoginModal(); openRegisterModal(); return false;">Criar conta gratis</a></div>
+    </div>
+  </div>
+
+  <div class="login-modal-overlay" id="registerModal">
+    <div class="login-modal">
+      <button class="login-modal-close" onclick="closeRegisterModal()">&times;</button>
+      <div class="login-modal-header">
+        <img src="images/logo-white.svg" alt="confirma.party">
+        <h2>Crie sua conta gratis</h2>
+        <p>Comece a organizar suas festas agora</p>
+      </div>
+      <div class="login-modal-body">
+        <div class="login-error" id="registerError">Erro ao criar conta.</div>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+          <div class="login-form-group">
+            <label for="registerName">Nome completo</label>
+            <input type="text" id="registerName" name="name" placeholder="Seu nome" required>
+          </div>
+          <div class="login-form-group">
+            <label for="registerEmail">Email</label>
+            <input type="email" id="registerEmail" name="email" placeholder="seu@email.com" required>
+          </div>
+          <div class="login-form-group">
+            <label for="registerPhone">Celular</label>
+            <input type="tel" id="registerPhone" name="phone" placeholder="(11) 99999-9999" required>
+          </div>
+          <div class="login-form-group">
+            <label for="registerPassword">Senha</label>
+            <input type="password" id="registerPassword" name="password" placeholder="Minimo 6 caracteres" minlength="6" required>
+          </div>
+          <button type="submit" class="login-submit">Criar Conta Gratis</button>
+        </form>
+      </div>
+      <div class="login-modal-footer">Ja tem uma conta? <a href="#" onclick="closeRegisterModal(); openLoginModal(); return false;">Fazer login</a></div>
+    </div>
+  </div>
+
+
   <footer>
     <div class="footer-content">
       <div class="footer-brand">
@@ -357,5 +429,16 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script>
+function openLoginModal(){document.getElementById('loginModal').classList.add('active');document.body.style.overflow='hidden';document.getElementById('loginEmail').focus()}
+function closeLoginModal(){document.getElementById('loginModal').classList.remove('active');document.body.style.overflow='';document.getElementById('loginError').classList.remove('active');document.getElementById('loginForm').reset()}
+function openRegisterModal(){document.getElementById('registerModal').classList.add('active');document.body.style.overflow='hidden';document.getElementById('registerName').focus()}
+function closeRegisterModal(){document.getElementById('registerModal').classList.remove('active');document.body.style.overflow='';document.getElementById('registerError').classList.remove('active');document.getElementById('registerForm').reset()}
+document.getElementById('loginModal').addEventListener('click',function(e){if(e.target===this)closeLoginModal()});
+document.getElementById('registerModal').addEventListener('click',function(e){if(e.target===this)closeRegisterModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('loginModal').classList.contains('active'))closeLoginModal();if(document.getElementById('registerModal').classList.contains('active'))closeRegisterModal()}});
+async function handleLogin(e){e.preventDefault();const btn=document.getElementById('loginForm').querySelector('.login-submit');const error=document.getElementById('loginError');const email=document.getElementById('loginEmail').value;const password=document.getElementById('loginPassword').value;btn.disabled=true;btn.textContent='Entrando...';error.classList.remove('active');try{const res=await fetch('https://confirma-party-api.onrender.com/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});const data=await res.json();if(res.ok&&data.token){localStorage.setItem('token',data.token);if(data.user)localStorage.setItem('user',JSON.stringify(data.user));window.location.href='/app/dashboard'}else{error.textContent=data.message||'Email ou senha incorretos.';error.classList.add('active')}}catch(err){error.textContent='Erro ao conectar.';error.classList.add('active')}finally{btn.disabled=false;btn.textContent='Entrar'}}
+async function handleRegister(e){e.preventDefault();const btn=document.getElementById('registerForm').querySelector('.login-submit');const error=document.getElementById('registerError');const name=document.getElementById('registerName').value;const email=document.getElementById('registerEmail').value;const password=document.getElementById('registerPassword').value;btn.disabled=true;btn.textContent='Criando conta...';error.classList.remove('active');try{const res=await fetch('https://confirma-party-api.onrender.com/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});const data=await res.json();if(res.ok&&data.token){localStorage.setItem('token',data.token);if(data.user)localStorage.setItem('user',JSON.stringify(data.user));window.location.href='/app/dashboard'}else{error.textContent=data.message||'Erro ao criar conta.';error.classList.add('active')}}catch(err){error.textContent='Erro ao conectar.';error.classList.add('active')}finally{btn.disabled=false;btn.textContent='Criar Conta Gratis'}}
+</script>
 </body>
 </html>

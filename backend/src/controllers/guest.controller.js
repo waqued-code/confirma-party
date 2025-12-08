@@ -7,11 +7,26 @@ exports.create = async (req, res) => {
     const { partyId, name, phone, contactMethod } = req.body;
 
     const party = await prisma.party.findFirst({
-      where: { id: partyId, userId: req.user.id }
+      where: { id: partyId, userId: req.user.id },
+      include: {
+        _count: { select: { guests: true } }
+      }
     });
 
     if (!party) {
       return res.status(404).json({ error: 'Festa não encontrada' });
+    }
+
+    // Verificar limite do plano
+    const currentGuestCount = party._count.guests;
+    if (currentGuestCount >= party.guestLimit) {
+      return res.status(403).json({
+        error: 'PLAN_LIMIT_REACHED',
+        message: 'Limite de convidados atingido',
+        currentPlan: party.plan,
+        guestLimit: party.guestLimit,
+        currentCount: currentGuestCount
+      });
     }
 
     const guest = await prisma.guest.create({
@@ -25,7 +40,9 @@ exports.create = async (req, res) => {
 
     res.status(201).json({
       message: 'Convidado adicionado com sucesso',
-      guest
+      guest,
+      guestCount: currentGuestCount + 1,
+      guestLimit: party.guestLimit
     });
   } catch (error) {
     console.error('Erro ao criar convidado:', error);

@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17782351592"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-17782351592');
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preços e Planos - Confirma.Party</title>
@@ -72,11 +81,11 @@
     }
 
     .pricing-grid {
-      max-width: 1100px;
+      max-width: 1300px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
       align-items: start;
     }
 
@@ -287,11 +296,17 @@
     }
 
     /* Responsive */
-    @media (max-width: 1024px) {
-      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+    @media (max-width: 1200px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); max-width: 700px; }
       .pricing-card.featured { transform: none; }
     }
-  </style>
+
+    @media (max-width: 768px) {
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+    }
+
+    /* Login Modal */
+    .login-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:2000;justify-content:center;align-items:center;padding:1rem}.login-modal-overlay.active{display:flex;animation:fadeIn 0.3s ease}.login-modal{background:white;border-radius:24px;width:100%;max-width:420px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;animation:slideUp 0.3s ease}.login-modal-header{background:linear-gradient(135deg,#ec4899,#8b5cf6);padding:2rem;border-radius:24px 24px 0 0;text-align:center;color:white}.login-modal-header img{height:40px;margin-bottom:1rem}.login-modal-header h2{font-family:var(--font-display);font-size:1.5rem;margin-bottom:0.25rem}.login-modal-header p{opacity:0.9;font-size:0.9375rem}.login-modal-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.2);border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:white;transition:background 0.2s}.login-modal-close:hover{background:rgba(255,255,255,0.3)}.login-modal-body{padding:2rem}.login-form-group{margin-bottom:1.25rem}.login-form-group label{display:block;font-weight:600;color:var(--gray-700);margin-bottom:0.5rem;font-size:0.875rem}.login-form-group input{width:100%;padding:0.875rem 1rem;border:1px solid var(--gray-200);border-radius:12px;font-size:1rem;transition:border-color 0.2s,box-shadow 0.2s;font-family:var(--font-body);box-sizing:border-box}.login-form-group input:focus{outline:none;border-color:#ec4899;box-shadow:0 0 0 3px rgba(236,72,153,0.1)}.login-form-group input::placeholder{color:var(--gray-400)}.login-submit{width:100%;padding:1rem;background:linear-gradient(135deg,#ec4899,#8b5cf6);color:white;border:none;border-radius:100px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;font-family:var(--font-body)}.login-submit:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(236,72,153,0.3)}.login-submit:disabled{opacity:0.7;cursor:not-allowed;transform:none}.login-modal-footer{text-align:center;padding:1.5rem 2rem;border-top:1px solid var(--gray-100);color:var(--gray-600);font-size:0.9375rem}.login-modal-footer a{color:#ec4899;font-weight:600;text-decoration:none}.login-modal-footer a:hover{text-decoration:underline}.login-error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:0.75rem 1rem;border-radius:12px;font-size:0.875rem;margin-bottom:1rem;display:none}.login-error.active{display:block}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}</style>
 </head>
 <body>
   <!-- Confetti -->
@@ -312,7 +327,8 @@
         <a href="eventos.html">Eventos</a>
         <a href="sobre.html">Sobre</a>
         <a href="precos.html" class="active">Preços</a>
-        <a href="/app/register" class="btn btn-primary btn-sm">Começar Grátis</a>
+        <a href="#" class="btn btn-outline btn-sm" onclick="openLoginModal(); return false;">Login</a>
+        <a href="#" class="btn btn-primary btn-sm" onclick="openRegisterModal(); return false;">Começar Grátis</a>
       </div>
     </div>
   </nav>
@@ -320,103 +336,109 @@
   <!-- Header -->
   <header class="page-header">
     <div class="section-badge fade-in">Preços</div>
-    <h1 class="section-title fade-in">Planos para cada necessidade</h1>
+    <h1 class="section-title fade-in">Simples e transparente</h1>
     <p class="section-subtitle fade-in">
-      Comece grátis e escale conforme suas festas crescem.
-      Sem surpresas, sem taxas escondidas.
+      Pague por festa, não por mês. Todos os planos incluem todas as funcionalidades.
+      Escolha apenas pelo tamanho da sua lista de convidados.
     </p>
   </header>
 
   <!-- Pricing -->
   <section class="pricing-section">
-    <div class="pricing-toggle fade-in">
-      <span class="active" id="monthly-label">Mensal</span>
-      <div class="toggle-switch" id="billing-toggle"></div>
-      <span id="yearly-label">Anual</span>
-      <span class="discount-badge">20% OFF</span>
+    <div style="text-align: center; margin-bottom: 3rem;" class="fade-in">
+      <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1)); padding: 0.75rem 1.5rem; border-radius: 100px; color: var(--gray-700); font-weight: 500;">
+        <span style="font-size: 1.25rem;">👨‍👩‍👧‍👦</span>
+        <span>1 convite = 1 família = 1 responsável por confirmar</span>
+      </div>
     </div>
 
     <div class="pricing-grid">
-      <!-- Basic -->
+      <!-- Grátis -->
       <div class="pricing-card fade-in">
         <div class="pricing-icon">🎈</div>
-        <div class="pricing-name">Básico</div>
-        <div class="pricing-desc">Para festas pequenas e quem quer experimentar</div>
+        <div class="pricing-name">Gratuito</div>
+        <div class="pricing-desc">Perfeito para festas íntimas e pequenas reuniões</div>
         <div class="pricing-price">
           <span class="pricing-currency">R$</span>
-          <span class="pricing-value" data-monthly="0" data-yearly="0">0</span>
-          <span class="pricing-period">/mês</span>
+          <span class="pricing-value">0</span>
+          <span class="pricing-period">/festa</span>
         </div>
         <ul class="pricing-features">
-          <li><span class="check">✓</span> 1 festa ativa</li>
-          <li><span class="check">✓</span> Até 50 convidados</li>
-          <li><span class="check">✓</span> Mensagens geradas por IA</li>
-          <li><span class="check">✓</span> Dashboard básico</li>
+          <li><span class="check">✓</span> <strong>Até 15 famílias</strong></li>
+          <li><span class="check">✓</span> WhatsApp integrado</li>
+          <li><span class="check">✓</span> IA conversacional 24h</li>
+          <li><span class="check">✓</span> Mensagens personalizadas</li>
+          <li><span class="check">✓</span> Dashboard completo</li>
+          <li><span class="check">✓</span> Lembretes automáticos</li>
           <li><span class="check">✓</span> Suporte por email</li>
-          <li class="disabled"><span class="check">✗</span> WhatsApp integrado</li>
-          <li class="disabled"><span class="check">✗</span> IA conversacional</li>
         </ul>
-        <a href="/app/register" class="btn btn-secondary">Começar Grátis</a>
+        <a href="#" onclick="openRegisterModal(); return false;" class="btn btn-secondary">Começar Grátis</a>
       </div>
 
-      <!-- Pro -->
+      <!-- Médio -->
       <div class="pricing-card featured fade-in">
         <div class="pricing-popular">Mais Popular</div>
         <div class="pricing-icon">🎉</div>
-        <div class="pricing-name">Profissional</div>
-        <div class="pricing-desc">Para grandes celebrações e quem quer o melhor</div>
+        <div class="pricing-name">Festa</div>
+        <div class="pricing-desc">Ideal para aniversários, batizados e formaturas</div>
         <div class="pricing-price">
           <span class="pricing-currency">R$</span>
-          <span class="pricing-value" data-monthly="97" data-yearly="77">97</span>
-          <span class="pricing-period">/mês</span>
-          <span class="pricing-original yearly-only" style="display: none;">de R$ 97/mês</span>
+          <span class="pricing-value">37</span>
+          <span class="pricing-period">/festa</span>
         </div>
         <ul class="pricing-features">
-          <li><span class="check">✓</span> 5 festas ativas</li>
-          <li><span class="check">✓</span> Até 500 convidados por festa</li>
-          <li><span class="check">✓</span> Mensagens geradas por IA</li>
-          <li><span class="check">✓</span> Dashboard completo</li>
+          <li><span class="check">✓</span> <strong>Até 50 famílias</strong></li>
           <li><span class="check">✓</span> WhatsApp integrado</li>
           <li><span class="check">✓</span> IA conversacional 24h</li>
+          <li><span class="check">✓</span> Mensagens personalizadas</li>
+          <li><span class="check">✓</span> Dashboard completo</li>
+          <li><span class="check">✓</span> Lembretes automáticos</li>
           <li><span class="check">✓</span> Suporte prioritário</li>
         </ul>
-        <a href="/app/register" class="btn btn-primary">Assinar Agora</a>
+        <a href="#" onclick="openRegisterModal(); return false;" class="btn btn-primary">Começar Agora</a>
       </div>
 
-      <!-- Enterprise -->
+      <!-- Grande -->
       <div class="pricing-card fade-in">
-        <div class="pricing-icon">🏢</div>
-        <div class="pricing-name">Empresarial</div>
-        <div class="pricing-desc">Para agências, buffets e empresas de eventos</div>
+        <div class="pricing-icon">💒</div>
+        <div class="pricing-name">Celebração</div>
+        <div class="pricing-desc">Perfeito para casamentos e grandes eventos</div>
         <div class="pricing-price">
           <span class="pricing-currency">R$</span>
-          <span class="pricing-value" data-monthly="297" data-yearly="237">297</span>
-          <span class="pricing-period">/mês</span>
-          <span class="pricing-original yearly-only" style="display: none;">de R$ 297/mês</span>
+          <span class="pricing-value">77</span>
+          <span class="pricing-period">/festa</span>
         </div>
         <ul class="pricing-features">
-          <li><span class="check">✓</span> Festas ilimitadas</li>
-          <li><span class="check">✓</span> Convidados ilimitados</li>
-          <li><span class="check">✓</span> Tudo do plano Pro</li>
-          <li><span class="check">✓</span> API personalizada</li>
-          <li><span class="check">✓</span> Multi-usuários</li>
-          <li><span class="check">✓</span> Relatórios avançados</li>
-          <li><span class="check">✓</span> Gerente de conta dedicado</li>
+          <li><span class="check">✓</span> <strong>Até 150 famílias</strong></li>
+          <li><span class="check">✓</span> WhatsApp integrado</li>
+          <li><span class="check">✓</span> IA conversacional 24h</li>
+          <li><span class="check">✓</span> Mensagens personalizadas</li>
+          <li><span class="check">✓</span> Dashboard completo</li>
+          <li><span class="check">✓</span> Lembretes automáticos</li>
+          <li><span class="check">✓</span> Suporte prioritário</li>
         </ul>
-        <a href="contato.html" class="btn btn-gold">Falar com Vendas</a>
+        <a href="#" onclick="openRegisterModal(); return false;" class="btn btn-gold">Começar Agora</a>
       </div>
-    </div>
-  </section>
 
-  <!-- Guarantee -->
-  <section class="guarantee-section">
-    <div class="guarantee-content fade-in">
-      <div class="guarantee-icon">🛡️</div>
-      <h2 class="guarantee-title">Garantia de 30 dias</h2>
-      <p class="guarantee-text">
-        Experimente sem risco. Se não ficar satisfeito nos primeiros 30 dias,
-        devolvemos 100% do seu dinheiro. Sem perguntas, sem burocracia.
-      </p>
+      <!-- Personalizado -->
+      <div class="pricing-card fade-in">
+        <div class="pricing-icon">🏢</div>
+        <div class="pricing-name">Personalizado</div>
+        <div class="pricing-desc">Para mega eventos e necessidades especiais</div>
+        <div class="pricing-price">
+          <span class="pricing-value" style="font-size: 2.5rem;">Sob consulta</span>
+        </div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> <strong>+150 famílias</strong></li>
+          <li><span class="check">✓</span> WhatsApp integrado</li>
+          <li><span class="check">✓</span> IA conversacional 24h</li>
+          <li><span class="check">✓</span> Mensagens personalizadas</li>
+          <li><span class="check">✓</span> Dashboard completo</li>
+          <li><span class="check">✓</span> Suporte dedicado</li>
+          <li><span class="check">✓</span> Consultoria personalizada</li>
+        </ul>
+        <a href="contato.html" class="btn btn-secondary">Falar Conosco</a>
+      </div>
     </div>
   </section>
 
@@ -431,14 +453,13 @@
     <div class="faq-grid">
       <div class="faq-item fade-in">
         <div class="faq-question">
-          <span>Posso mudar de plano depois?</span>
+          <span>O que é uma "família" no sistema?</span>
           <span class="icon">+</span>
         </div>
         <div class="faq-answer">
           <div class="faq-answer-content">
-            Sim! Você pode fazer upgrade ou downgrade a qualquer momento.
-            Se fizer upgrade, a diferença é cobrada proporcionalmente.
-            Se fizer downgrade, o novo valor vale a partir do próximo ciclo.
+            Uma família é um convite único enviado para um responsável que confirma por todos da casa.
+            Por exemplo: "João Silva" confirma por ele, esposa e 2 filhos. Isso conta como 1 família, mesmo sendo 4 pessoas.
           </div>
         </div>
       </div>
@@ -450,8 +471,47 @@
         </div>
         <div class="faq-answer">
           <div class="faq-answer-content">
-            Não! O plano Básico é totalmente gratuito e não requer cartão de crédito.
-            Você só precisa informar dados de pagamento se decidir fazer upgrade.
+            Não! O plano Gratuito é totalmente grátis e não requer cartão de crédito.
+            Você só precisa informar dados de pagamento se precisar de mais de 15 famílias.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          <span>Todos os planos têm as mesmas funcionalidades?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Sim! Todos os planos incluem WhatsApp integrado, IA conversacional, dashboard completo e lembretes automáticos.
+            A única diferença é a quantidade de famílias que você pode convidar.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          <span>Pago uma vez ou todo mês?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Você paga por festa, não por mês! Criou uma festa de aniversário? Paga uma vez.
+            No próximo ano, cria outra festa e paga novamente. Simples assim.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item fade-in">
+        <div class="faq-question">
+          <span>E se eu precisar de mais famílias do que meu plano permite?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-content">
+            Você pode fazer upgrade a qualquer momento! Basta pagar a diferença para o plano maior.
+            Por exemplo: se você está no Gratuito (15 famílias) e precisa de 40, paga R$37 para ir para o plano Festa (50 famílias).
           </div>
         </div>
       </div>
@@ -463,48 +523,9 @@
         </div>
         <div class="faq-answer">
           <div class="faq-answer-content">
-            Você conecta seu WhatsApp pessoal ou comercial escaneando um QR code.
+            Você conecta seu WhatsApp escaneando um QR code.
             Depois, o sistema envia as mensagens automaticamente usando sua conta.
-            Isso garante que os convidados recebam de um número conhecido.
-          </div>
-        </div>
-      </div>
-
-      <div class="faq-item fade-in">
-        <div class="faq-question">
-          <span>A IA responde em português?</span>
-          <span class="icon">+</span>
-        </div>
-        <div class="faq-answer">
-          <div class="faq-answer-content">
-            Sim! Nossa IA é treinada especificamente para português brasileiro.
-            Ela entende gírias, expressões e responde de forma natural e amigável.
-          </div>
-        </div>
-      </div>
-
-      <div class="faq-item fade-in">
-        <div class="faq-question">
-          <span>Posso cancelar a qualquer momento?</span>
-          <span class="icon">+</span>
-        </div>
-        <div class="faq-answer">
-          <div class="faq-answer-content">
-            Sim, você pode cancelar quando quiser. Não há fidelidade ou multa.
-            Seus dados ficam disponíveis até o fim do período pago.
-          </div>
-        </div>
-      </div>
-
-      <div class="faq-item fade-in">
-        <div class="faq-question">
-          <span>Vocês oferecem desconto para ONGs ou escolas?</span>
-          <span class="icon">+</span>
-        </div>
-        <div class="faq-answer">
-          <div class="faq-answer-content">
-            Sim! Oferecemos 50% de desconto para organizações sem fins lucrativos.
-            Entre em contato pelo email ong@confirma.party para solicitar.
+            Os convidados recebem de um número conhecido e a IA responde por você 24h.
           </div>
         </div>
       </div>
@@ -522,6 +543,76 @@
       </div>
     </div>
   </section>
+
+  <!-- Login Modal -->
+  <div class="login-modal-overlay" id="loginModal">
+    <div class="login-modal">
+      <button class="login-modal-close" onclick="closeLoginModal()">&times;</button>
+      <div class="login-modal-header">
+        <img src="images/logo-white.svg" alt="confirma.party">
+        <h2>Bem-vindo de volta!</h2>
+        <p>Entre para acessar seu painel</p>
+      </div>
+      <div class="login-modal-body">
+        <div class="login-error" id="loginError">Email ou senha incorretos.</div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="login-form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" name="email" placeholder="seu@email.com" required>
+          </div>
+          <div class="login-form-group">
+            <label for="loginPassword">Senha</label>
+            <input type="password" id="loginPassword" name="password" placeholder="Digite sua senha" required>
+          </div>
+          <div class="login-options">
+            <label class="login-remember"><input type="checkbox" name="remember"> Lembrar-me</label>
+            <a href="/app/forgot-password" class="login-forgot">Esqueceu a senha?</a>
+          </div>
+          <button type="submit" class="login-submit">Entrar</button>
+        </form>
+      </div>
+      <div class="login-modal-footer">Ainda nao tem conta? <a href="#" onclick="closeLoginModal(); openRegisterModal(); return false;">Criar conta gratis</a></div>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="login-modal-overlay" id="registerModal">
+    <div class="login-modal">
+      <button class="login-modal-close" onclick="closeRegisterModal()">&times;</button>
+      <div class="login-modal-header">
+        <img src="images/logo-white.svg" alt="confirma.party">
+        <h2>Crie sua conta grátis</h2>
+        <p>Comece a organizar suas festas agora</p>
+      </div>
+      <div class="login-modal-body">
+        <div class="login-error" id="registerError">
+          Erro ao criar conta. Tente novamente.
+        </div>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+          <div class="login-form-group">
+            <label for="registerName">Nome completo</label>
+            <input type="text" id="registerName" name="name" placeholder="Seu nome" required>
+          </div>
+          <div class="login-form-group">
+            <label for="registerEmail">Email</label>
+            <input type="email" id="registerEmail" name="email" placeholder="seu@email.com" required>
+          </div>
+          <div class="login-form-group">
+            <label for="registerPhone">Celular</label>
+            <input type="tel" id="registerPhone" name="phone" placeholder="(11) 99999-9999" required>
+          </div>
+          <div class="login-form-group">
+            <label for="registerPassword">Senha</label>
+            <input type="password" id="registerPassword" name="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+          </div>
+          <button type="submit" class="login-submit">Criar Conta Grátis</button>
+        </form>
+      </div>
+      <div class="login-modal-footer">
+        Já tem uma conta? <a href="#" onclick="closeRegisterModal(); openLoginModal(); return false;">Fazer login</a>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer>
@@ -572,30 +663,18 @@
 
   <script src="js/main.js"></script>
   <script>
-    // Billing toggle
-    const toggle = document.getElementById('billing-toggle');
-    const monthlyLabel = document.getElementById('monthly-label');
-    const yearlyLabel = document.getElementById('yearly-label');
-    const priceValues = document.querySelectorAll('.pricing-value');
-    const yearlyOnlyElements = document.querySelectorAll('.yearly-only');
+    // Login Modal
+    function openLoginModal(){document.getElementById('loginModal').classList.add('active');document.body.style.overflow='hidden';document.getElementById('loginEmail').focus()}
+    function closeLoginModal(){document.getElementById('loginModal').classList.remove('active');document.body.style.overflow='';document.getElementById('loginError').classList.remove('active');document.getElementById('loginForm').reset()}
+    document.getElementById('loginModal').addEventListener('click',function(e){if(e.target===this)closeLoginModal()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('loginModal').classList.contains('active'))closeLoginModal();if(document.getElementById('registerModal').classList.contains('active'))closeRegisterModal()}});
+    async function handleLogin(e){e.preventDefault();const form=e.target,email=form.email.value,password=form.password.value,submitBtn=form.querySelector('.login-submit'),errorDiv=document.getElementById('loginError');submitBtn.disabled=true;submitBtn.textContent='Entrando...';errorDiv.classList.remove('active');try{const response=await fetch('https://confirma-party-api.onrender.com/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});const data=await response.json();if(response.ok&&data.token){localStorage.setItem('token',data.token);if(data.user)localStorage.setItem('user',JSON.stringify(data.user));window.location.href='/app/dashboard'}else{errorDiv.textContent=data.message||'Email ou senha incorretos.';errorDiv.classList.add('active')}}catch(error){errorDiv.textContent='Erro ao conectar.';errorDiv.classList.add('active')}finally{submitBtn.disabled=false;submitBtn.textContent='Entrar'}}
 
-    toggle.addEventListener('click', () => {
-      toggle.classList.toggle('active');
-      const isYearly = toggle.classList.contains('active');
-
-      monthlyLabel.classList.toggle('active', !isYearly);
-      yearlyLabel.classList.toggle('active', isYearly);
-
-      priceValues.forEach(el => {
-        const monthly = el.dataset.monthly;
-        const yearly = el.dataset.yearly;
-        el.textContent = isYearly ? yearly : monthly;
-      });
-
-      yearlyOnlyElements.forEach(el => {
-        el.style.display = isYearly ? 'block' : 'none';
-      });
-    });
+    // Register Modal
+    function openRegisterModal(){document.getElementById('registerModal').classList.add('active');document.body.style.overflow='hidden';document.getElementById('registerName').focus()}
+    function closeRegisterModal(){document.getElementById('registerModal').classList.remove('active');document.body.style.overflow='';document.getElementById('registerError').classList.remove('active');document.getElementById('registerForm').reset()}
+    document.getElementById('registerModal').addEventListener('click',function(e){if(e.target===this)closeRegisterModal()});
+    async function handleRegister(e){e.preventDefault();const form=e.target;const name=form.name.value;const email=form.email.value;const phone=form.phone.value;const password=form.password.value;const submitBtn=form.querySelector('.login-submit');const errorDiv=document.getElementById('registerError');submitBtn.disabled=true;submitBtn.textContent='Criando conta...';errorDiv.classList.remove('active');try{const response=await fetch('https://confirma-party-api.onrender.com/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,password})});const data=await response.json();if(response.ok&&data.token){localStorage.setItem('token',data.token);if(data.user){localStorage.setItem('user',JSON.stringify(data.user))}window.location.href='/app/dashboard'}else{errorDiv.textContent=data.error||data.message||'Erro ao criar conta. Tente novamente.';errorDiv.classList.add('active')}}catch(error){errorDiv.textContent='Erro ao conectar. Verifique sua conexão.';errorDiv.classList.add('active')}finally{submitBtn.disabled=false;submitBtn.textContent='Criar Conta Grátis'}}
   </script>
 </body>
 </html>
