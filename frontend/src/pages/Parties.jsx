@@ -11,11 +11,6 @@ import {
   IconButton,
   Chip,
   Skeleton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -25,6 +20,7 @@ import {
   CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
 import { partyService } from '../services/party.service';
+import DeletePartyDialog from '../components/DeletePartyDialog';
 
 export default function Parties() {
   const [parties, setParties] = useState([]);
@@ -48,13 +44,9 @@ export default function Parties() {
   };
 
   const handleDelete = async () => {
-    try {
-      await partyService.delete(deleteDialog.party.id);
-      setParties(parties.filter((p) => p.id !== deleteDialog.party.id));
-      setDeleteDialog({ open: false, party: null });
-    } catch (error) {
-      console.error('Erro ao excluir festa:', error);
-    }
+    await partyService.delete(deleteDialog.party.id);
+    setParties(parties.filter((p) => p.id !== deleteDialog.party.id));
+    setDeleteDialog({ open: false, party: null });
   };
 
   const getPartyTypeColor = (type) => {
@@ -218,26 +210,12 @@ export default function Parties() {
         </Grid>
       )}
 
-      <Dialog
+      <DeletePartyDialog
         open={deleteDialog.open}
         onClose={() => setDeleteDialog({ open: false, party: null })}
-      >
-        <DialogTitle>Excluir Festa</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Tem certeza que deseja excluir a festa "{deleteDialog.party?.name}"?
-            Esta ação não pode ser desfeita e todos os convidados serão removidos.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialog({ open: false, party: null })}>
-            Cancelar
-          </Button>
-          <Button onClick={handleDelete} color="error" variant="contained">
-            Excluir
-          </Button>
-        </DialogActions>
-      </Dialog>
+        party={deleteDialog.party}
+        onConfirm={handleDelete}
+      />
     </Box>
   );
 }
