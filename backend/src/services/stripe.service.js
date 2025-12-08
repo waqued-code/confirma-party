@@ -35,8 +35,8 @@ exports.createCheckoutSession = async ({
       payment_method_types: ['card'],
       mode: 'payment',
       customer_email: customerEmail,
-      success_url: successUrl || `${process.env.FRONTEND_URL || 'https://confirma.party'}/app/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancelUrl || `${process.env.FRONTEND_URL || 'https://confirma.party'}/app/payment/cancel`,
+      success_url: successUrl || `${process.env.FRONTEND_URL || 'https://confirma.party'}/app/payment/success/?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl || `${process.env.FRONTEND_URL || 'https://confirma.party'}/app/parties`,
       metadata: {
         paymentId,
         plan

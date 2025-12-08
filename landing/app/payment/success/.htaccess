@@ -1,0 +1,11 @@
+# Disable ModSecurity for this directory
+<IfModule mod_security2.c>
+  SecRuleEngine Off
+</IfModule>
+
+# Alternative: Allow specific query parameters
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{QUERY_STRING} session_id=
+  RewriteRule .* - [L]
+</IfModule>
