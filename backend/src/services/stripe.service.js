@@ -1,6 +1,12 @@
 const Stripe = require('stripe');
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Initialize Stripe only if key is available
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+} else {
+  console.warn('STRIPE_SECRET_KEY not configured - payment features disabled');
+}
 
 // Configuração dos planos com Price IDs do Stripe
 // Você precisa criar esses produtos/preços no Dashboard do Stripe
@@ -18,6 +24,9 @@ exports.createCheckoutSession = async ({
   successUrl,
   cancelUrl
 }) => {
+  if (!stripe) {
+    throw new Error('Stripe not configured');
+  }
   try {
     // Se tiver Price ID configurado, usa ele
     const priceId = PLAN_PRICES[plan];
@@ -77,6 +86,9 @@ exports.createCheckoutSession = async ({
 
 // Verificar status de uma sessão
 exports.getSessionStatus = async (sessionId) => {
+  if (!stripe) {
+    throw new Error('Stripe not configured');
+  }
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     return {
@@ -110,6 +122,9 @@ exports.constructWebhookEvent = (payload, signature) => {
 
 // Criar reembolso
 exports.createRefund = async (paymentIntentId) => {
+  if (!stripe) {
+    throw new Error('Stripe not configured');
+  }
   try {
     const refund = await stripe.refunds.create({
       payment_intent: paymentIntentId
