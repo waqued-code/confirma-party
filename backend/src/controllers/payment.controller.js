@@ -325,6 +325,48 @@ exports.stripeWebhook = async (req, res) => {
   }
 };
 
+// Atualizar plano manualmente (admin)
+exports.manualUpgrade = async (req, res) => {
+  try {
+    const { partyId, plan } = req.body;
+
+    if (!partyId || !plan) {
+      return res.status(400).json({ error: 'partyId e plan são obrigatórios' });
+    }
+
+    const newPlan = PLANS[plan];
+    if (!newPlan) {
+      return res.status(400).json({ error: 'Plano inválido' });
+    }
+
+    const party = await prisma.party.findFirst({
+      where: { id: partyId, userId: req.user.id }
+    });
+
+    if (!party) {
+      return res.status(404).json({ error: 'Festa não encontrada' });
+    }
+
+    await prisma.party.update({
+      where: { id: partyId },
+      data: {
+        plan: plan,
+        guestLimit: newPlan.limit
+      }
+    });
+
+    res.json({
+      success: true,
+      message: 'Plano atualizado com sucesso',
+      newPlan: plan,
+      newLimit: newPlan.limit
+    });
+  } catch (error) {
+    console.error('Erro ao atualizar plano:', error);
+    res.status(500).json({ error: 'Erro ao atualizar plano' });
+  }
+};
+
 // Histórico de pagamentos de uma festa
 exports.getPaymentHistory = async (req, res) => {
   try {

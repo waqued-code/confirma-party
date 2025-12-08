@@ -12,5 +12,6 @@ router.post('/checkout', authMiddleware, paymentController.createCheckout);
 router.get('/verify/:sessionId', authMiddleware, paymentController.verifySession);
 router.post('/confirm/:paymentId', authMiddleware, paymentController.confirmPayment);
 router.get('/history/:partyId', authMiddleware, paymentController.getPaymentHistory);
+router.post('/manual-upgrade', authMiddleware, paymentController.manualUpgrade);
 
 module.exports = router;
