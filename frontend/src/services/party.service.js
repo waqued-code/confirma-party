@@ -27,4 +27,6 @@ export const partyService = {
     api.post(`/ai/regenerate-invite/${id}`, { instructions }),
 
   sendToAllGuests: (id) => api.post(`/whatsapp/send-all/${id}`),
+
+  sendTestMessage: (id) => api.post(`/whatsapp/send-test/${id}`),
 };

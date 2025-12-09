@@ -94,6 +94,58 @@ exports.sendToGuest = async (req, res) => {
   }
 };
 
+// Enviar mensagem de teste para o telefone do usuário
+exports.sendTestMessage = async (req, res) => {
+  try {
+    const { partyId } = req.params;
+
+    // Buscar festa e usuário
+    const party = await prisma.party.findFirst({
+      where: { id: partyId, userId: req.user.id },
+      include: {
+        user: {
+          select: { phone: true, name: true }
+        }
+      }
+    });
+
+    if (!party) {
+      return res.status(404).json({ error: 'Festa não encontrada' });
+    }
+
+    if (!party.inviteMessage) {
+      return res.status(400).json({ error: 'Gere uma mensagem de convite primeiro' });
+    }
+
+    if (!party.user.phone) {
+      return res.status(400).json({ error: 'Você precisa ter um telefone cadastrado no seu perfil para testar' });
+    }
+
+    // Substituir placeholder pelo nome do usuário
+    const testMessage = party.inviteMessage.replace('{nome_convidado}', party.user.name || 'Convidado');
+
+    // Enviar mensagem de teste
+    const result = await evolutionService.sendTextMessage(party.user.phone, testMessage);
+
+    if (result.success) {
+      res.json({
+        success: true,
+        message: 'Mensagem de teste enviada para seu WhatsApp!',
+        phone: party.user.phone
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        error: 'Falha ao enviar mensagem de teste',
+        details: result.error
+      });
+    }
+  } catch (error) {
+    console.error('Erro ao enviar mensagem de teste:', error);
+    res.status(500).json({ error: 'Erro ao enviar mensagem de teste' });
+  }
+};
+
 exports.sendToAllGuests = async (req, res) => {
   try {
     const { partyId } = req.params;

@@ -80,6 +80,7 @@ export default function PartyDetails() {
   const [regenerateInstructions, setRegenerateInstructions] = useState('');
   const [generatingMessage, setGeneratingMessage] = useState(false);
   const [sendingMessages, setSendingMessages] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -218,6 +219,27 @@ export default function PartyDetails() {
       });
     } finally {
       setSendingMessages(false);
+    }
+  };
+
+  const handleSendTest = async () => {
+    if (!party.inviteMessage) {
+      setSnackbar({ open: true, message: 'Gere uma mensagem primeiro', severity: 'warning' });
+      return;
+    }
+
+    setSendingTest(true);
+    try {
+      const response = await partyService.sendTestMessage(id);
+      setSnackbar({ open: true, message: response.data.message, severity: 'success' });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || 'Erro ao enviar mensagem de teste',
+        severity: 'error',
+      });
+    } finally {
+      setSendingTest(false);
     }
   };
 
@@ -604,7 +626,7 @@ export default function PartyDetails() {
               >
                 {party.inviteMessage || `Olá, você é meu convidado para ${party.name}, no dia ${new Date(party.date).toLocaleDateString('pt-BR')} gostaria de saber se posso confirmar sua presença.`}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
+              <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                 <Button
                   size="small"
                   variant="outlined"
@@ -617,6 +639,22 @@ export default function PartyDetails() {
                   }}
                 >
                   Editar
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={sendingTest ? <CircularProgress size={14} color="inherit" /> : <WhatsAppIcon />}
+                  onClick={handleSendTest}
+                  disabled={sendingTest || !party.inviteMessage}
+                  sx={{
+                    borderRadius: 2,
+                    borderColor: '#25D366',
+                    color: '#25D366',
+                    '&:hover': { borderColor: '#128C7E', bgcolor: '#dcfce7' },
+                    '&.Mui-disabled': { borderColor: 'grey.200', color: 'grey.400' }
+                  }}
+                >
+                  Testar
                 </Button>
                 <Button
                   size="small"

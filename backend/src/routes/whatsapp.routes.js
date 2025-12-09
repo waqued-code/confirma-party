@@ -15,5 +15,6 @@ router.post('/webhook', whatsappController.setWebhook);
 // Envio de mensagens
 router.post('/send/:guestId', whatsappController.sendToGuest);
 router.post('/send-all/:partyId', whatsappController.sendToAllGuests);
+router.post('/send-test/:partyId', whatsappController.sendTestMessage);
 
 module.exports = router;
