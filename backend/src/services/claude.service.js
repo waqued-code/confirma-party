@@ -8,24 +8,46 @@ const anthropic = new Anthropic({
  * Gera uma mensagem de convite personalizada para a festa
  */
 exports.generateInviteMessage = async (party) => {
-  const prompt = `Você é um assistente especializado em criar mensagens de convite para festas.
+  const partyDate = new Date(party.date).toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
-Crie uma mensagem de convite para WhatsApp para a seguinte festa:
-- Nome da festa: ${party.name}
-- Tipo: ${party.partyType}
-- Data: ${new Date(party.date).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-${party.observations ? `- Observações: ${party.observations}` : ''}
+  const prompt = `Você é um especialista em criar mensagens de convite para festas via WhatsApp.
 
-A mensagem deve:
-1. Ser calorosa e convidativa
-2. Incluir todas as informações importantes
-3. Ter um tom adequado ao tipo de festa
-4. Perguntar se a pessoa confirma presença
-5. Ser formatada para WhatsApp (usar *negrito* e _itálico_ quando apropriado)
-6. Ter no máximo 500 caracteres
-7. Incluir {nome_convidado} onde o nome do convidado deve aparecer
+INFORMAÇÕES DA FESTA:
+- Nome do evento: ${party.name}
+- Tipo de evento: ${party.partyType}
+- Data: ${partyDate}
+${party.observations ? `- Detalhes importantes: ${party.observations}` : ''}
 
-Responda apenas com a mensagem, sem explicações.`;
+DIRETRIZES OBRIGATÓRIAS (WhatsApp Business API):
+1. NÃO use linguagem promocional excessiva (evite "IMPERDÍVEL", "INCRÍVEL", múltiplas exclamações)
+2. NÃO use CAPS LOCK excessivo
+3. NÃO inclua links ou URLs
+4. A mensagem deve parecer pessoal, como se fosse enviada por um amigo
+5. Evite parecer spam ou mensagem automatizada
+
+ESTRUTURA DA MENSAGEM:
+1. Saudação calorosa e pessoal usando {nome_convidado} para personalizar
+2. Mencione claramente o nome do evento: "${party.name}"
+3. Informe a data de forma natural
+4. Inclua os detalhes das observações de forma fluida (se houver)
+5. Peça confirmação de presença de forma gentil
+6. Tom adequado ao tipo de festa (${party.partyType})
+
+FORMATO:
+- Use formatação WhatsApp com moderação: *negrito* para destaques importantes
+- Máximo 400 caracteres
+- Quebre em parágrafos curtos para facilitar leitura
+- Termine com uma pergunta sobre confirmação
+
+EXEMPLO DE PLACEHOLDER:
+Use exatamente {nome_convidado} onde o nome do convidado deve aparecer.
+
+Responda APENAS com a mensagem final, sem explicações ou comentários.`;
 
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-20250514',

@@ -32,6 +32,7 @@ model Party {
   user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   guests            Guest[]
   payments          Payment[]
+  followUps         FollowUp[]
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 }
@@ -97,4 +98,33 @@ model Payment {
   party           Party         @relation(fields: [partyId], references: [id], onDelete: Cascade)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+enum FollowUpScheduleType {
+  SPECIFIC_DATE       // Data específica
+  DAYS_BEFORE_PARTY   // X dias antes da festa
+  DAYS_AFTER_INVITE   // X dias depois do primeiro convite
+}
+
+enum FollowUpStatus {
+  PENDING   // Aguardando envio
+  SENT      // Enviado
+  FAILED    // Falhou
+}
+
+model FollowUp {
+  id            String               @id @default(uuid())
+  message       String               // Mensagem do follow-up
+  scheduleType  FollowUpScheduleType // Tipo de agendamento
+  scheduledDate DateTime?            // Data específica (quando scheduleType = SPECIFIC_DATE)
+  daysOffset    Int?                 // Dias de offset (para DAYS_BEFORE_PARTY ou DAYS_AFTER_INVITE)
+  status        FollowUpStatus       @default(PENDING)
+  sentAt        DateTime?            // Data/hora do envio efetivo
+  order         Int                  // 1 ou 2 (ordem do follow-up)
+  partyId       String
+  party         Party                @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  @@unique([partyId, order]) // Apenas um follow-up por ordem por festa
 }

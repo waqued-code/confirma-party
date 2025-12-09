@@ -81,6 +81,9 @@ exports.getById = async (req, res) => {
       include: {
         guests: {
           orderBy: { name: 'asc' }
+        },
+        followUps: {
+          orderBy: { order: 'asc' }
         }
       }
     });

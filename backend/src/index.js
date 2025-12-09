@@ -10,6 +10,7 @@ const aiRoutes = require('./routes/ai.routes');
 const whatsappRoutes = require('./routes/whatsapp.routes');
 const webhookRoutes = require('./routes/webhook.routes');
 const paymentRoutes = require('./routes/payment.routes');
+const followupRoutes = require('./routes/followup.routes');
 const paymentController = require('./controllers/payment.controller');
 
 const prisma = new PrismaClient();
@@ -41,6 +42,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/webhook', webhookRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/followups', followupRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

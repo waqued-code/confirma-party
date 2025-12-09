@@ -44,6 +44,7 @@ import {
 import { partyService } from '../services/party.service';
 import { guestService } from '../services/guest.service';
 import UpgradeDialog from '../components/UpgradeDialog';
+import FollowUpSection from '../components/FollowUpSection';
 
 const statusConfig = {
   NAO_RESPONDEU: { label: 'Aguardando', color: '#f59e0b', bgColor: '#fef3c7', icon: '⏳' },
@@ -676,6 +677,13 @@ export default function PartyDetails() {
           </Box>
         </Grid>
       </Grid>
+
+      {/* Follow-ups Section */}
+      <FollowUpSection
+        party={party}
+        followUps={party.followUps || []}
+        onUpdate={loadParty}
+      />
 
       {/* Guests Table */}
       <Box
