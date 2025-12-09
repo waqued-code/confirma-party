@@ -18,23 +18,34 @@ model User {
   parties   Party[]
 }
 
+enum MessageTemplateStatus {
+  DRAFT           // Rascunho - ainda sendo editado
+  PENDING_REVIEW  // Aguardando validação
+  APPROVED        // Aprovado - pode enviar
+  REJECTED        // Rejeitado - precisa ajustar
+}
+
 model Party {
-  id                String     @id @default(uuid())
-  name              String
-  date              DateTime
-  contactDate       DateTime   // Data para começar a entrar em contato
-  partyType         String     // Casamento, Aniversário, Corporativo, etc.
-  observations      String?
-  inviteMessage     String?    // Mensagem gerada pela IA
-  plan              PartyPlan  @default(GRATUITO)
-  guestLimit        Int        @default(15) // Limite de famílias
-  userId            String
-  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  guests            Guest[]
-  payments          Payment[]
-  followUps         FollowUp[]
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
+  id                    String                @id @default(uuid())
+  name                  String
+  date                  DateTime
+  contactDate           DateTime              // Data para começar a entrar em contato
+  partyType             String                // Casamento, Aniversário, Corporativo, etc.
+  observations          String?
+  inviteMessage         String?               // Mensagem gerada pela IA
+  messageTemplateStatus MessageTemplateStatus @default(DRAFT)
+  validationErrors      String?               // Erros de validação em JSON
+  firstInviteSentAt     DateTime?             // Data/hora do primeiro envio em massa
+  plan                  PartyPlan             @default(GRATUITO)
+  guestLimit            Int                   @default(15) // Limite de famílias
+  userId                String
+  user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guests                Guest[]
+  payments              Payment[]
+  followUps             FollowUp[]
+  messageQueue          MessageQueue[]
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
 }
 
 enum GuestStatus {
@@ -64,18 +75,23 @@ enum PaymentStatus {
 }
 
 model Guest {
-  id            String        @id @default(uuid())
-  name          String
-  phone         String
-  contactMethod ContactMethod @default(WHATSAPP)
-  status        GuestStatus   @default(NAO_RESPONDEU)
-  lastContactAt DateTime?
-  notes         String?       // Observações da conversa
-  partyId       String
-  party         Party         @relation(fields: [partyId], references: [id], onDelete: Cascade)
-  messages      Message[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id               String        @id @default(uuid())
+  name             String
+  phone            String
+  contactMethod    ContactMethod @default(WHATSAPP)
+  status           GuestStatus   @default(NAO_RESPONDEU)
+  lastContactAt    DateTime?
+  firstContactAt   DateTime?     // Data do primeiro contato
+  followUp1SentAt  DateTime?     // Data do envio do follow-up 1
+  followUp2SentAt  DateTime?     // Data do envio do follow-up 2
+  sendError        String?       // Último erro de envio
+  notes            String?       // Observações da conversa
+  partyId          String
+  party            Party         @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  messages         Message[]
+  messageQueue     MessageQueue[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 }
 
 model Message {
@@ -127,4 +143,38 @@ model FollowUp {
   updatedAt     DateTime             @updatedAt
 
   @@unique([partyId, order]) // Apenas um follow-up por ordem por festa
+}
+
+enum MessageQueueStatus {
+  SCHEDULED   // Agendado para envio
+  SENDING     // Enviando
+  SENT        // Enviado com sucesso
+  FAILED      // Falhou no envio
+  CANCELLED   // Cancelado
+}
+
+enum MessageQueueType {
+  INVITE      // Convite inicial
+  FOLLOW_UP_1 // Follow-up 1
+  FOLLOW_UP_2 // Follow-up 2
+  CUSTOM      // Mensagem personalizada
+}
+
+model MessageQueue {
+  id            String             @id @default(uuid())
+  type          MessageQueueType   // Tipo da mensagem
+  content       String             // Conteúdo da mensagem
+  scheduledFor  DateTime           // Data/hora agendada para envio
+  status        MessageQueueStatus @default(SCHEDULED)
+  attempts      Int                @default(0) // Tentativas de envio
+  lastError     String?            // Último erro
+  sentAt        DateTime?          // Data/hora do envio efetivo
+  guestId       String
+  guest         Guest              @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  partyId       String
+  party         Party              @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@index([status, scheduledFor]) // Index para buscar mensagens pendentes
 }
