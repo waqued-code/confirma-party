@@ -60,7 +60,7 @@ export default function Login() {
       {/* Link para voltar à landing */}
       <Box
         component="a"
-        href="/"
+        href="https://confirma.party"
         sx={{
           position: 'absolute',
           top: 24,

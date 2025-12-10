@@ -40,6 +40,15 @@ exports.disconnect = async (req, res) => {
   }
 };
 
+exports.resetConnection = async (req, res) => {
+  try {
+    const result = await evolutionService.resetConnection();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 exports.setWebhook = async (req, res) => {
   try {
     const { webhookUrl } = req.body;
@@ -155,12 +164,25 @@ exports.sendToAllGuests = async (req, res) => {
       include: {
         guests: {
           where: { status: 'NAO_RESPONDEU' }
-        }
+        },
+        _count: { select: { guests: true } }
       }
     });
 
     if (!party) {
       return res.status(404).json({ error: 'Festa não encontrada' });
+    }
+
+    // Verificar limite do plano antes de enviar
+    const currentGuestCount = party._count.guests;
+    if (currentGuestCount > party.guestLimit) {
+      return res.status(403).json({
+        error: 'PLAN_LIMIT_EXCEEDED',
+        message: `Você tem ${currentGuestCount} convidados, mas seu plano permite apenas ${party.guestLimit}. Faça upgrade para enviar mensagens.`,
+        currentPlan: party.plan,
+        guestLimit: party.guestLimit,
+        currentCount: currentGuestCount
+      });
     }
 
     if (!party.inviteMessage) {

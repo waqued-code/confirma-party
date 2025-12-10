@@ -67,7 +67,10 @@ body {
   height: 10px;
   opacity: 0.6;
   animation: confetti-fall linear infinite;
-  animation-play-state: paused;
+}
+
+.js-loaded .confetti {
+  animation-play-state: running;
 }
 
 .confetti:nth-child(1) { left: 5%; animation-duration: 14s; animation-delay: 0s; background: var(--pink); border-radius: 50%; }

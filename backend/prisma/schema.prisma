@@ -178,3 +178,22 @@ model MessageQueue {
 
   @@index([status, scheduledFor]) // Index para buscar mensagens pendentes
 }
+
+// WhatsApp Auth State - Armazena credenciais do Baileys no banco de dados
+model WhatsAppAuth {
+  id        String   @id @default("default") // Usar 'default' para instância única
+  creds     String?  @db.Text // Credenciais serializadas em JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// WhatsApp Auth Keys - Armazena as chaves de sessão
+model WhatsAppAuthKey {
+  id        String   @id // ID da chave (ex: "pre-key-1", "session-1234")
+  authId    String   @default("default") // Referência ao WhatsAppAuth
+  data      String   @db.Text // Dados da chave em JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authId])
+}

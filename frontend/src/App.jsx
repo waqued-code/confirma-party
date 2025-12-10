@@ -10,6 +10,7 @@ import PartyDetails from './pages/PartyDetails';
 import PartyDashboard from './pages/PartyDashboard';
 import WhatsAppSettings from './pages/WhatsAppSettings';
 import PaymentSuccess from './pages/PaymentSuccess';
+import NotFound from './pages/NotFound';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -67,6 +68,8 @@ function App() {
         <Route path="whatsapp" element={<WhatsAppSettings />} />
         <Route path="app/payment/success" element={<PaymentSuccess />} />
       </Route>
+      {/* Rota 404 - catch all */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

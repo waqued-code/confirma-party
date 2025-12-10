@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const XLSX = require('xlsx');
+const { validatePhone, validatePhoneList } = require('../utils/phoneValidator');
 
 const prisma = new PrismaClient();
 
@@ -191,19 +192,7 @@ exports.uploadGuests = async (req, res) => {
       return res.status(400).json({ error: 'Arquivo não fornecido' });
     }
 
-    // Verificar limite do plano
     const currentGuestCount = party._count.guests;
-    const availableSlots = party.guestLimit - currentGuestCount;
-
-    if (availableSlots <= 0) {
-      return res.status(403).json({
-        error: 'PLAN_LIMIT_REACHED',
-        message: 'Limite de convidados atingido',
-        currentPlan: party.plan,
-        guestLimit: party.guestLimit,
-        currentCount: currentGuestCount
-      });
-    }
 
     const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
@@ -214,43 +203,64 @@ exports.uploadGuests = async (req, res) => {
       return res.status(400).json({ error: 'Planilha vazia' });
     }
 
-    let guests = data.map(row => {
+    // Extrai dados da planilha
+    let rawGuests = data.map((row, index) => {
       const name = row.nome || row.Nome || row.NOME || row.name || row.Name;
-      const phone = String(row.telefone || row.Telefone || row.TELEFONE || row.phone || row.Phone || row.celular || row.Celular || '').replace(/\D/g, '');
+      const phone = String(row.telefone || row.Telefone || row.TELEFONE || row.phone || row.Phone || row.celular || row.Celular || '');
       const contactMethod = (row.contato || row.Contato || row.metodo || 'WHATSAPP').toUpperCase().includes('LIGA') ? 'LIGACAO' : 'WHATSAPP';
 
-      return { name, phone, contactMethod, partyId: id };
+      return { name, phone, contactMethod, partyId: id, row: index + 2 };
     }).filter(g => g.name && g.phone);
 
-    if (guests.length === 0) {
+    if (rawGuests.length === 0) {
       return res.status(400).json({
         error: 'Nenhum convidado válido encontrado. Certifique-se de que a planilha tem colunas "nome" e "telefone"'
       });
     }
 
-    // Verificar se a planilha excede o limite
-    if (guests.length > availableSlots) {
-      return res.status(403).json({
-        error: 'PLAN_LIMIT_EXCEEDED',
-        message: `Sua planilha tem ${guests.length} convidados, mas você só pode adicionar mais ${availableSlots}`,
-        currentPlan: party.plan,
-        guestLimit: party.guestLimit,
-        currentCount: currentGuestCount,
-        availableSlots: availableSlots,
-        fileGuestCount: guests.length
+    // Valida telefones
+    const { valid, invalid } = validatePhoneList(rawGuests);
+
+    if (valid.length === 0) {
+      return res.status(400).json({
+        error: 'INVALID_PHONES',
+        message: 'Nenhum telefone válido encontrado na planilha',
+        details: 'O telefone deve ter 11 dígitos: DDD (2 dígitos) + número do celular (9 dígitos começando com 9)',
+        invalidPhones: invalid.slice(0, 10).map(g => ({
+          nome: g.name,
+          telefone: g.phone,
+          erro: g.phoneError,
+          linha: g.row
+        }))
       });
     }
+
+    // Remove a propriedade 'row' antes de salvar
+    const guests = valid.map(({ row, ...guest }) => guest);
 
     const createdGuests = await prisma.guest.createMany({
       data: guests,
       skipDuplicates: true
     });
 
+    // Prepara resposta com informações sobre telefones inválidos
+    let message = `${createdGuests.count} convidados importados com sucesso`;
+    if (invalid.length > 0) {
+      message += `. ${invalid.length} ignorados por telefone inválido`;
+    }
+
     res.status(201).json({
-      message: `${createdGuests.count} convidados importados com sucesso`,
+      message,
       count: createdGuests.count,
       guestCount: currentGuestCount + createdGuests.count,
-      guestLimit: party.guestLimit
+      guestLimit: party.guestLimit,
+      invalidCount: invalid.length,
+      invalidPhones: invalid.length > 0 ? invalid.slice(0, 5).map(g => ({
+        nome: g.name,
+        telefone: g.phone,
+        erro: g.phoneError,
+        linha: g.row
+      })) : undefined
     });
   } catch (error) {
     console.error('Erro ao importar convidados:', error);

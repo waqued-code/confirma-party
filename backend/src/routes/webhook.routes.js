@@ -3,11 +3,7 @@ const webhookController = require('../controllers/webhook.controller');
 
 const router = express.Router();
 
-// WhatsApp Cloud API (Meta) - Webhook principal
-router.get('/whatsapp', webhookController.verifyWhatsAppWebhook);   // Verificação
-router.post('/whatsapp', webhookController.handleWhatsAppWebhook); // Mensagens
-
-// Evolution API (Legacy)
+// Evolution API - Webhook principal
 router.post('/evolution', webhookController.handleEvolutionWebhook);
 
 module.exports = router;

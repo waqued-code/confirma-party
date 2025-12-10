@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const messageTemplateService = require('../services/messageTemplate.service');
 const messageSchedulerService = require('../services/messageScheduler.service');
-const whatsappCloudService = require('../services/whatsappCloud.service');
+const evolutionService = require('../services/evolution.service');
 
 const prisma = new PrismaClient();
 
@@ -135,8 +135,8 @@ exports.sendTestMessage = async (req, res) => {
     // Personaliza a mensagem com nome do usuário
     const testMessage = party.inviteMessage.replace('{nome_convidado}', party.user.name);
 
-    // Envia via WhatsApp Cloud API
-    const result = await whatsappCloudService.sendTextMessage(party.user.phone, testMessage);
+    // Envia via Evolution API
+    const result = await evolutionService.sendTextMessage(party.user.phone, testMessage);
 
     if (result.success) {
       res.json({
@@ -167,11 +167,26 @@ exports.sendToAllGuests = async (req, res) => {
     const { scheduleFor } = req.body; // Data opcional para agendar
 
     const party = await prisma.party.findFirst({
-      where: { id: partyId, userId: req.user.id }
+      where: { id: partyId, userId: req.user.id },
+      include: {
+        _count: { select: { guests: true } }
+      }
     });
 
     if (!party) {
       return res.status(404).json({ error: 'Festa não encontrada' });
+    }
+
+    // Verificar limite do plano antes de enviar
+    const currentGuestCount = party._count.guests;
+    if (currentGuestCount > party.guestLimit) {
+      return res.status(403).json({
+        error: 'PLAN_LIMIT_EXCEEDED',
+        message: `Você tem ${currentGuestCount} convidados, mas seu plano permite apenas ${party.guestLimit}. Faça upgrade para enviar mensagens.`,
+        currentPlan: party.plan,
+        guestLimit: party.guestLimit,
+        currentCount: currentGuestCount
+      });
     }
 
     // Verificar se pode enviar

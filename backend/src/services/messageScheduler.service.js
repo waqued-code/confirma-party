@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-const whatsappCloudService = require('./whatsappCloud.service');
+const evolutionService = require('./evolution.service');
 
 const prisma = new PrismaClient();
 
@@ -196,8 +196,8 @@ exports.processMessageQueue = async () => {
         data: { status: 'SENDING', attempts: queueItem.attempts + 1 }
       });
 
-      // Enviar via WhatsApp Cloud API
-      const sendResult = await whatsappCloudService.sendTextMessage(
+      // Enviar via Evolution API
+      const sendResult = await evolutionService.sendTextMessage(
         queueItem.guest.phone,
         queueItem.content
       );

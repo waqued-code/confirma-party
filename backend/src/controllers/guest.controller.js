@@ -1,10 +1,21 @@
 const { PrismaClient } = require('@prisma/client');
+const { validatePhone } = require('../utils/phoneValidator');
 
 const prisma = new PrismaClient();
 
 exports.create = async (req, res) => {
   try {
     const { partyId, name, phone, contactMethod } = req.body;
+
+    // Validar telefone
+    const phoneValidation = validatePhone(phone);
+    if (!phoneValidation.valid) {
+      return res.status(400).json({
+        error: 'INVALID_PHONE',
+        message: phoneValidation.error,
+        details: 'O telefone deve ter 11 dígitos: DDD (2 dígitos) + número do celular (9 dígitos começando com 9). Exemplo: 11999999999'
+      });
+    }
 
     const party = await prisma.party.findFirst({
       where: { id: partyId, userId: req.user.id },
@@ -17,22 +28,12 @@ exports.create = async (req, res) => {
       return res.status(404).json({ error: 'Festa não encontrada' });
     }
 
-    // Verificar limite do plano
     const currentGuestCount = party._count.guests;
-    if (currentGuestCount >= party.guestLimit) {
-      return res.status(403).json({
-        error: 'PLAN_LIMIT_REACHED',
-        message: 'Limite de convidados atingido',
-        currentPlan: party.plan,
-        guestLimit: party.guestLimit,
-        currentCount: currentGuestCount
-      });
-    }
 
     const guest = await prisma.guest.create({
       data: {
         name,
-        phone: phone.replace(/\D/g, ''),
+        phone: phoneValidation.phone,
         contactMethod: contactMethod || 'WHATSAPP',
         partyId
       }

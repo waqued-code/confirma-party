@@ -50,7 +50,7 @@ Use exatamente {nome_convidado} onde o nome do convidado deve aparecer.
 Responda APENAS com a mensagem final, sem explicações ou comentários.`;
 
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-opus-4-5-20251101',
     max_tokens: 1024,
     messages: [{ role: 'user', content: prompt }]
   });
@@ -85,7 +85,7 @@ Analise a mensagem e retorne um JSON com:
 Responda apenas com o JSON válido, sem markdown ou explicações.`;
 
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-opus-4-5-20251101',
     max_tokens: 512,
     messages: [{ role: 'user', content: prompt }]
   });
@@ -127,7 +127,7 @@ Suas responsabilidades:
   }));
 
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-opus-4-5-20251101',
     max_tokens: 512,
     system: systemPrompt,
     messages

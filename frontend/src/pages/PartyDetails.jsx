@@ -40,11 +40,15 @@ import {
   Refresh as RefreshIcon,
   PersonAdd as PersonAddIcon,
   FolderOpen as FolderIcon,
+  ContactPhone as ContactPhoneIcon,
+  Warning as WarningIcon,
 } from '@mui/icons-material';
 import { partyService } from '../services/party.service';
 import { guestService } from '../services/guest.service';
 import UpgradeDialog from '../components/UpgradeDialog';
 import FollowUpSection from '../components/FollowUpSection';
+import ImportContactsDialog from '../components/ImportContactsDialog';
+import { validatePhone, phoneMask } from '../utils/phoneValidator';
 
 const statusConfig = {
   NAO_RESPONDEU: { label: 'Aguardando', color: '#f59e0b', bgColor: '#fef3c7', icon: '⏳' },
@@ -75,9 +79,10 @@ export default function PartyDetails() {
   const [addGuestDialog, setAddGuestDialog] = useState(false);
   const [regenerateDialog, setRegenerateDialog] = useState(false);
   const [upgradeDialog, setUpgradeDialog] = useState(false);
+  const [importContactsDialog, setImportContactsDialog] = useState(false);
 
   // Form states
-  const [newGuests, setNewGuests] = useState([{ name: '', phone: '', contactMethod: 'WHATSAPP' }]);
+  const [newGuests, setNewGuests] = useState([{ name: '', phone: '', contactMethod: 'WHATSAPP', phoneError: '' }]);
   const [regenerateInstructions, setRegenerateInstructions] = useState('');
   const [generatingMessage, setGeneratingMessage] = useState(false);
   const [sendingMessages, setSendingMessages] = useState(false);
@@ -115,16 +120,11 @@ export default function PartyDetails() {
       setSnackbar({ open: true, message: response.data.message, severity: 'success' });
       loadParty();
     } catch (error) {
-      const errorCode = error.response?.data?.error;
-      if (errorCode === 'PLAN_LIMIT_EXCEEDED' || errorCode === 'PLAN_LIMIT_REACHED') {
-        setUpgradeDialog(true);
-      } else {
-        setSnackbar({
-          open: true,
-          message: error.response?.data?.message || error.response?.data?.error || 'Erro ao importar convidados',
-          severity: 'error',
-        });
-      }
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || error.response?.data?.error || 'Erro ao importar convidados',
+        severity: 'error',
+      });
     } finally {
       setUploadingFile(false);
     }
@@ -213,11 +213,16 @@ export default function PartyDetails() {
       setSnackbar({ open: true, message: response.data.message, severity: 'success' });
       loadParty();
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.error || 'Erro ao enviar mensagens',
-        severity: 'error',
-      });
+      const errorCode = error.response?.data?.error;
+      if (errorCode === 'PLAN_LIMIT_EXCEEDED') {
+        setUpgradeDialog(true);
+      } else {
+        setSnackbar({
+          open: true,
+          message: error.response?.data?.message || error.response?.data?.error || 'Erro ao enviar mensagens',
+          severity: 'error',
+        });
+      }
     } finally {
       setSendingMessages(false);
     }
@@ -245,41 +250,57 @@ export default function PartyDetails() {
   };
 
   const handleAddGuest = async () => {
-    const validGuests = newGuests.filter(g => g.name.trim() && g.phone.trim());
-    if (validGuests.length === 0) {
+    const filledGuests = newGuests.filter(g => g.name.trim() && g.phone.trim());
+    if (filledGuests.length === 0) {
       setSnackbar({ open: true, message: 'Preencha pelo menos um convidado', severity: 'warning' });
       return;
     }
 
+    // Validar todos os telefones
+    const validatedGuests = filledGuests.map(guest => {
+      const validation = validatePhone(guest.phone);
+      return { ...guest, phoneValid: validation.valid, phoneError: validation.error };
+    });
+
+    const invalidGuests = validatedGuests.filter(g => !g.phoneValid);
+    if (invalidGuests.length > 0) {
+      // Atualiza os erros no state
+      const updated = newGuests.map(guest => {
+        const validation = validatePhone(guest.phone);
+        return { ...guest, phoneError: guest.phone.trim() ? (validation.valid ? '' : validation.error) : '' };
+      });
+      setNewGuests(updated);
+      setSnackbar({
+        open: true,
+        message: `${invalidGuests.length} telefone(s) inválido(s). Use DDD + 9 dígitos (ex: 11999999999)`,
+        severity: 'error'
+      });
+      return;
+    }
+
     try {
-      for (const guest of validGuests) {
-        await guestService.create({ ...guest, partyId: id });
+      for (const guest of validatedGuests) {
+        await guestService.create({ name: guest.name, phone: guest.phone, contactMethod: guest.contactMethod, partyId: id });
       }
       setSnackbar({
         open: true,
-        message: validGuests.length === 1 ? 'Convidado adicionado!' : `${validGuests.length} convidados adicionados!`,
+        message: validatedGuests.length === 1 ? 'Convidado adicionado!' : `${validatedGuests.length} convidados adicionados!`,
         severity: 'success'
       });
       setAddGuestDialog(false);
-      setNewGuests([{ name: '', phone: '', contactMethod: 'WHATSAPP' }]);
+      setNewGuests([{ name: '', phone: '', contactMethod: 'WHATSAPP', phoneError: '' }]);
       loadParty();
     } catch (error) {
-      const errorCode = error.response?.data?.error;
-      if (errorCode === 'PLAN_LIMIT_REACHED' || errorCode === 'PLAN_LIMIT_EXCEEDED') {
-        setAddGuestDialog(false);
-        setUpgradeDialog(true);
-      } else {
-        setSnackbar({
-          open: true,
-          message: error.response?.data?.message || error.response?.data?.error || 'Erro ao adicionar convidado',
-          severity: 'error',
-        });
-      }
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || error.response?.data?.error || 'Erro ao adicionar convidado',
+        severity: 'error',
+      });
     }
   };
 
   const handleAddGuestRow = () => {
-    setNewGuests([...newGuests, { name: '', phone: '', contactMethod: 'WHATSAPP' }]);
+    setNewGuests([...newGuests, { name: '', phone: '', contactMethod: 'WHATSAPP', phoneError: '' }]);
   };
 
   const handleRemoveGuestRow = (index) => {
@@ -290,7 +311,17 @@ export default function PartyDetails() {
 
   const handleGuestChange = (index, field, value) => {
     const updated = [...newGuests];
-    updated[index][field] = value;
+
+    if (field === 'phone') {
+      // Aplica máscara no telefone
+      updated[index].phone = phoneMask(value);
+      // Valida o telefone
+      const validation = validatePhone(value);
+      updated[index].phoneError = validation.valid ? '' : validation.error;
+    } else {
+      updated[index][field] = value;
+    }
+
     setNewGuests(updated);
   };
 
@@ -310,6 +341,35 @@ export default function PartyDetails() {
       loadParty();
     } catch (error) {
       setSnackbar({ open: true, message: 'Erro ao atualizar status', severity: 'error' });
+    }
+  };
+
+  const handleImportContacts = async (contacts) => {
+    try {
+      let successCount = 0;
+      for (const guest of contacts) {
+        try {
+          await guestService.create({ ...guest, partyId: id });
+          successCount++;
+        } catch (error) {
+          console.error('Erro ao importar contato:', error);
+        }
+      }
+
+      if (successCount > 0) {
+        setSnackbar({
+          open: true,
+          message: successCount === 1 ? 'Contato importado!' : `${successCount} contatos importados!`,
+          severity: 'success'
+        });
+        loadParty();
+      }
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Erro ao importar contatos',
+        severity: 'error',
+      });
     }
   };
 
@@ -480,21 +540,42 @@ export default function PartyDetails() {
               <Typography variant="h6" sx={{ fontWeight: 600, color: 'grey.800' }}>
                 Importar Convidados
               </Typography>
-              <Link
-                component="button"
-                variant="body2"
-                onClick={() => setAddGuestDialog(true)}
-                sx={{
-                  color: 'grey.500',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                  transition: 'color 0.2s',
-                  '&:hover': { color: '#ec4899' }
-                }}
-              >
-                Adicionar manualmente
-              </Link>
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                <Link
+                  component="button"
+                  variant="body2"
+                  onClick={() => setImportContactsDialog(true)}
+                  sx={{
+                    color: 'grey.500',
+                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    fontWeight: 500,
+                    transition: 'color 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    '&:hover': { color: '#ec4899' }
+                  }}
+                >
+                  <ContactPhoneIcon sx={{ fontSize: 16 }} />
+                  Da agenda
+                </Link>
+                <Link
+                  component="button"
+                  variant="body2"
+                  onClick={() => setAddGuestDialog(true)}
+                  sx={{
+                    color: 'grey.500',
+                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    fontWeight: 500,
+                    transition: 'color 0.2s',
+                    '&:hover': { color: '#ec4899' }
+                  }}
+                >
+                  Adicionar manualmente
+                </Link>
+              </Box>
             </Box>
 
             <input
@@ -602,6 +683,28 @@ export default function PartyDetails() {
                 </IconButton>
               </Tooltip>
             </Box>
+
+            {/* Alert when guest limit exceeded */}
+            {(party.guests?.length || 0) > (party.guestLimit || 15) && (
+              <Alert
+                severity="warning"
+                icon={<WarningIcon />}
+                sx={{ mb: 2, borderRadius: 2 }}
+                action={
+                  <Button
+                    color="inherit"
+                    size="small"
+                    onClick={() => setUpgradeDialog(true)}
+                    sx={{ fontWeight: 600 }}
+                  >
+                    Fazer Upgrade
+                  </Button>
+                }
+              >
+                Você tem {party.guests?.length || 0} convidados, mas seu plano permite apenas {party.guestLimit || 15}.
+                Faça upgrade para enviar mensagens.
+              </Alert>
+            )}
 
             <Box
               sx={{
@@ -966,7 +1069,7 @@ export default function PartyDetails() {
         open={addGuestDialog}
         onClose={() => {
           setAddGuestDialog(false);
-          setNewGuests([{ name: '', phone: '', contactMethod: 'WHATSAPP' }]);
+          setNewGuests([{ name: '', phone: '', contactMethod: 'WHATSAPP', phoneError: '' }]);
         }}
         maxWidth="sm"
         fullWidth
@@ -1001,14 +1104,16 @@ export default function PartyDetails() {
                   value={guest.phone}
                   onChange={(e) => handleGuestChange(index, 'phone', e.target.value)}
                   placeholder="(11) 99999-9999"
+                  error={!!guest.phoneError}
+                  helperText={guest.phoneError}
                   sx={{
                     flex: 1,
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 2,
-                      '&:hover fieldset': { borderColor: '#ec4899' },
-                      '&.Mui-focused fieldset': { borderColor: '#ec4899' }
+                      '&:hover fieldset': { borderColor: guest.phoneError ? '#ef4444' : '#ec4899' },
+                      '&.Mui-focused fieldset': { borderColor: guest.phoneError ? '#ef4444' : '#ec4899' }
                     },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#ec4899' }
+                    '& .MuiInputLabel-root.Mui-focused': { color: guest.phoneError ? '#ef4444' : '#ec4899' }
                   }}
                   size="small"
                 />
@@ -1052,7 +1157,7 @@ export default function PartyDetails() {
             <Button
               onClick={() => {
                 setAddGuestDialog(false);
-                setNewGuests([{ name: '', phone: '', contactMethod: 'WHATSAPP' }]);
+                setNewGuests([{ name: '', phone: '', contactMethod: 'WHATSAPP', phoneError: '' }]);
               }}
               sx={{ color: 'grey.600' }}
             >
@@ -1081,6 +1186,13 @@ export default function PartyDetails() {
           setUpgradeDialog(false);
           loadParty();
         }}
+      />
+
+      {/* Import Contacts Dialog */}
+      <ImportContactsDialog
+        open={importContactsDialog}
+        onClose={() => setImportContactsDialog(false)}
+        onImport={handleImportContacts}
       />
 
       {/* Snackbar */}

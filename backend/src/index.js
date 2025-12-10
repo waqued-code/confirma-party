@@ -22,7 +22,9 @@ app.use(cors({
   origin: [
     'https://confirma.party',
     'http://confirma.party',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://confirma-party-web.onrender.com',
+    /\.onrender\.com$/  // Qualquer subdomínio do Render
   ],
   credentials: true
 }));

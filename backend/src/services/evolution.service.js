@@ -1,5 +1,18 @@
 const axios = require('axios');
 
+// Usa Baileys em vez de Evolution API
+// Define WHATSAPP_MODE=evolution no .env para usar Evolution API
+const USE_BAILEYS = process.env.WHATSAPP_MODE !== 'evolution';
+
+let baileysService = null;
+if (USE_BAILEYS) {
+  baileysService = require('./whatsappBaileys.service');
+  // Inicializa a conexão automaticamente
+  baileysService.initialize().catch(err => {
+    console.error('[WhatsApp] Erro na inicialização:', err.message);
+  });
+}
+
 const evolutionApi = axios.create({
   baseURL: process.env.EVOLUTION_API_URL,
   headers: {
@@ -14,6 +27,10 @@ const INSTANCE = process.env.EVOLUTION_INSTANCE || 'confirma-party';
  * Verifica o status da instância
  */
 exports.getInstanceStatus = async () => {
+  if (USE_BAILEYS && baileysService) {
+    return baileysService.getConnectionStatus();
+  }
+
   try {
     const response = await evolutionApi.get(`/instance/connectionState/${INSTANCE}`);
     return response.data;
@@ -27,6 +44,38 @@ exports.getInstanceStatus = async () => {
  * Gera QR Code para conectar WhatsApp
  */
 exports.getQRCode = async () => {
+  if (USE_BAILEYS && baileysService) {
+    const status = baileysService.getConnectionStatus();
+
+    // Se já está conectado, retorna o status
+    if (status.connected) {
+      return {
+        status: 'connected',
+        phoneNumber: status.phoneNumber,
+        message: 'WhatsApp já está conectado'
+      };
+    }
+
+    // Se tem QR Code disponível, retorna
+    if (status.qrDataUrl) {
+      return {
+        status: 'qr_pending',
+        qrCode: status.qrCode,
+        qrDataUrl: status.qrDataUrl,
+        message: 'Escaneie o QR Code para conectar'
+      };
+    }
+
+    // Gera novo QR Code
+    const newStatus = await baileysService.generateNewQRCode();
+    return {
+      status: newStatus.status,
+      qrCode: newStatus.qrCode,
+      qrDataUrl: newStatus.qrDataUrl,
+      message: newStatus.qrDataUrl ? 'QR Code gerado' : 'Aguarde o QR Code...'
+    };
+  }
+
   try {
     const response = await evolutionApi.get(`/instance/connect/${INSTANCE}`);
     return response.data;
@@ -40,6 +89,10 @@ exports.getQRCode = async () => {
  * Cria uma nova instância
  */
 exports.createInstance = async () => {
+  if (USE_BAILEYS) {
+    return await exports.getQRCode();
+  }
+
   try {
     const response = await evolutionApi.post('/instance/create', {
       instanceName: INSTANCE,
@@ -57,6 +110,10 @@ exports.createInstance = async () => {
  * Envia mensagem de texto
  */
 exports.sendTextMessage = async (phone, message) => {
+  if (USE_BAILEYS && baileysService) {
+    return baileysService.sendTextMessage(phone, message);
+  }
+
   try {
     // Formata o número (Brasil)
     let formattedPhone = phone.replace(/\D/g, '');
@@ -87,6 +144,26 @@ exports.sendTextMessage = async (phone, message) => {
  * Envia mensagem para múltiplos números
  */
 exports.sendBulkMessages = async (guests, messageTemplate) => {
+  if (USE_BAILEYS && baileysService) {
+    const messages = guests.map(guest => ({
+      phone: guest.phone,
+      message: messageTemplate.replace('{nome_convidado}', guest.name),
+      guestId: guest.id,
+      guestName: guest.name
+    }));
+
+    const results = await baileysService.sendBulkMessages(messages, 3000);
+
+    return results.map(r => ({
+      guestId: r.guestId,
+      guestName: r.guestName,
+      phone: r.phone,
+      success: r.success,
+      messageId: r.messageId,
+      error: r.error
+    }));
+  }
+
   const results = [];
 
   for (const guest of guests) {
@@ -109,9 +186,25 @@ exports.sendBulkMessages = async (guests, messageTemplate) => {
 };
 
 /**
+ * Verifica se um número existe no WhatsApp
+ */
+exports.checkNumberExists = async (phone) => {
+  if (USE_BAILEYS && baileysService) {
+    return baileysService.checkNumberExists(phone);
+  }
+
+  // Evolution API não tem esse endpoint facilmente
+  return { exists: true };
+};
+
+/**
  * Configura webhook para receber mensagens
  */
 exports.setWebhook = async (webhookUrl) => {
+  if (USE_BAILEYS) {
+    return { message: 'Webhook não necessário - Baileys processa mensagens diretamente' };
+  }
+
   try {
     const response = await evolutionApi.post(`/webhook/set/${INSTANCE}`, {
       webhook: {
@@ -136,6 +229,11 @@ exports.setWebhook = async (webhookUrl) => {
  * Desconecta a instância
  */
 exports.logout = async () => {
+  if (USE_BAILEYS && baileysService) {
+    await baileysService.disconnect();
+    return { message: 'Desconectado com sucesso' };
+  }
+
   try {
     const response = await evolutionApi.delete(`/instance/logout/${INSTANCE}`);
     return response.data;
@@ -143,4 +241,17 @@ exports.logout = async () => {
     console.error('Erro ao desconectar:', error.response?.data || error.message);
     throw new Error('Erro ao desconectar WhatsApp');
   }
+};
+
+/**
+ * Limpa credenciais e gera novo QR Code
+ */
+exports.resetConnection = async () => {
+  if (USE_BAILEYS && baileysService) {
+    return baileysService.generateNewQRCode();
+  }
+
+  // Para Evolution API, desconecta e reconecta
+  await exports.logout();
+  return exports.getQRCode();
 };

@@ -10,6 +10,7 @@ router.use(authMiddleware);
 router.get('/status', whatsappController.getStatus);
 router.post('/connect', whatsappController.connect);
 router.post('/disconnect', whatsappController.disconnect);
+router.post('/reset', whatsappController.resetConnection);
 router.post('/webhook', whatsappController.setWebhook);
 
 // Envio de mensagens
