@@ -68,7 +68,7 @@ services:
 
       # Frontend URL para redirecionamentos
       - key: FRONTEND_URL
-        value: https://confirma-party-web.onrender.com
+        value: https://confirma-party.onrender.com
 
   # ----------------------------------------
   # FRONTEND - React/Vite Static Site
