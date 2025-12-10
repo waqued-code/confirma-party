@@ -32,6 +32,25 @@ function PublicRoute({ children }) {
   return user ? <Navigate to="/dashboard" /> : children;
 }
 
+function AdminRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  // Se não é admin, redireciona para dashboard
+  if (!user.isAdmin) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return children;
+}
+
 function App() {
   return (
     <Routes>

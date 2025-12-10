@@ -40,7 +40,8 @@ exports.register = async (req, res) => {
         id: true,
         email: true,
         name: true,
-        phone: true
+        phone: true,
+        isAdmin: true
       }
     });
 
@@ -92,7 +93,8 @@ exports.login = async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
-        phone: user.phone
+        phone: user.phone,
+        isAdmin: user.isAdmin
       },
       token
     });
@@ -111,6 +113,7 @@ exports.me = async (req, res) => {
         email: true,
         name: true,
         phone: true,
+        isAdmin: true,
         createdAt: true
       }
     });

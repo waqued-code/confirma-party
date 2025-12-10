@@ -17,7 +17,7 @@ const authMiddleware = async (req, res, next) => {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, email: true, name: true }
+      select: { id: true, email: true, name: true, isAdmin: true }
     });
 
     if (!user) {

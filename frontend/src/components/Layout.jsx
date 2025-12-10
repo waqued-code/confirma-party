@@ -31,11 +31,20 @@ import { useAuth } from '../contexts/AuthContext';
 
 const drawerWidth = 260;
 
-const menuItems = [
-  { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  { text: 'Minhas Festas', icon: <CelebrationIcon />, path: '/parties' },
-  { text: 'WhatsApp', icon: <WhatsAppIcon />, path: '/whatsapp' },
-];
+// Menu items base (para todos os usuários)
+const getMenuItems = (isAdmin) => {
+  const items = [
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Minhas Festas', icon: <CelebrationIcon />, path: '/parties' },
+  ];
+
+  // WhatsApp config apenas para admin
+  if (isAdmin) {
+    items.push({ text: 'WhatsApp', icon: <WhatsAppIcon />, path: '/whatsapp' });
+  }
+
+  return items;
+};
 
 export default function Layout() {
   const theme = useTheme();
@@ -62,6 +71,8 @@ export default function Layout() {
     logout();
     navigate('/login');
   };
+
+  const menuItems = getMenuItems(user?.isAdmin);
 
   const drawer = (
     <Box>

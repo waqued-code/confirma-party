@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Card,
@@ -19,8 +20,18 @@ import {
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { whatsappService } from '../services/whatsapp.service';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function WhatsAppSettings() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Redireciona se não for admin
+  useEffect(() => {
+    if (user && !user.isAdmin) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
   const [status, setStatus] = useState(null);
   const [qrCode, setQrCode] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,8 +47,18 @@ export default function WhatsAppSettings() {
     setLoading(true);
     try {
       const response = await whatsappService.getStatus();
-      setStatus(response.data);
-      setQrCode(null);
+      // Baileys retorna 'status' ao invés de 'state'
+      // Normaliza para usar 'state' para manter compatibilidade
+      const data = response.data;
+      if (data.status === 'connected') {
+        data.state = 'open';
+      } else if (data.status === 'qr_pending') {
+        data.state = 'qr_pending';
+        setQrCode(data.qrDataUrl);
+      } else {
+        data.state = 'disconnected';
+      }
+      setStatus(data);
     } catch (error) {
       console.error('Erro ao verificar status:', error);
       setStatus({ state: 'disconnected' });
@@ -50,18 +71,27 @@ export default function WhatsAppSettings() {
     setConnecting(true);
     try {
       const response = await whatsappService.connect();
-      if (response.data.qrcode) {
+      // Baileys retorna qrDataUrl diretamente
+      if (response.data.qrDataUrl) {
+        setQrCode(response.data.qrDataUrl);
+      } else if (response.data.qrcode) {
         setQrCode(response.data.qrcode);
       }
+
       // Poll for connection
       const interval = setInterval(async () => {
         try {
           const statusRes = await whatsappService.getStatus();
-          if (statusRes.data.state === 'open') {
+          // Baileys usa 'status' = 'connected'
+          if (statusRes.data.status === 'connected' || statusRes.data.state === 'open') {
             clearInterval(interval);
+            statusRes.data.state = 'open';
             setStatus(statusRes.data);
             setQrCode(null);
             setSnackbar({ open: true, message: 'WhatsApp conectado!', severity: 'success' });
+          } else if (statusRes.data.qrDataUrl) {
+            // Atualiza QR Code se mudou
+            setQrCode(statusRes.data.qrDataUrl);
           }
         } catch (e) {
           // ignore polling errors
@@ -73,7 +103,7 @@ export default function WhatsAppSettings() {
     } catch (error) {
       setSnackbar({
         open: true,
-        message: error.response?.data?.error || 'Erro ao conectar',
+        message: error.response?.data?.error || error.response?.data?.message || 'Erro ao conectar',
         severity: 'error',
       });
     } finally {
@@ -189,7 +219,7 @@ export default function WhatsAppSettings() {
             </Typography>
             <Box
               component="img"
-              src={qrCode.base64 || `data:image/png;base64,${qrCode}`}
+              src={qrCode.startsWith?.('data:') ? qrCode : (qrCode.base64 || `data:image/png;base64,${qrCode}`)}
               alt="QR Code"
               sx={{
                 maxWidth: 300,

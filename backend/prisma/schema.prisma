@@ -13,6 +13,7 @@ model User {
   password  String
   name      String
   phone     String?
+  isAdmin   Boolean  @default(false) // Admin pode configurar WhatsApp da plataforma
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   parties   Party[]
