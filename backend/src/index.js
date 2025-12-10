@@ -12,6 +12,7 @@ const webhookRoutes = require('./routes/webhook.routes');
 const paymentRoutes = require('./routes/payment.routes');
 const followupRoutes = require('./routes/followup.routes');
 const messageFlowRoutes = require('./routes/messageFlow.routes');
+const adminRoutes = require('./routes/admin.routes');
 const paymentController = require('./controllers/payment.controller');
 
 const prisma = new PrismaClient();
@@ -49,6 +50,7 @@ app.use('/api/webhook', webhookRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/followups', followupRoutes);
 app.use('/api/message-flow', messageFlowRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

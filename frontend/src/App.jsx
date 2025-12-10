@@ -9,6 +9,7 @@ import CreateParty from './pages/CreateParty';
 import PartyDetails from './pages/PartyDetails';
 import PartyDashboard from './pages/PartyDashboard';
 import WhatsAppSettings from './pages/WhatsAppSettings';
+import AdminDashboard from './pages/AdminDashboard';
 import PaymentSuccess from './pages/PaymentSuccess';
 import NotFound from './pages/NotFound';
 
@@ -85,6 +86,7 @@ function App() {
         <Route path="parties/:id" element={<PartyDetails />} />
         <Route path="parties/:id/dashboard" element={<PartyDashboard />} />
         <Route path="whatsapp" element={<WhatsAppSettings />} />
+        <Route path="admin" element={<AdminDashboard />} />
         <Route path="app/payment/success" element={<PaymentSuccess />} />
       </Route>
       {/* Rota 404 - catch all */}

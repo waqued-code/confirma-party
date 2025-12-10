@@ -26,6 +26,7 @@ import {
   WhatsApp as WhatsAppIcon,
   Logout as LogoutIcon,
   Person as PersonIcon,
+  AdminPanelSettings as AdminIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -38,8 +39,9 @@ const getMenuItems = (isAdmin) => {
     { text: 'Minhas Festas', icon: <CelebrationIcon />, path: '/parties' },
   ];
 
-  // WhatsApp config apenas para admin
+  // Menu de admin
   if (isAdmin) {
+    items.push({ text: 'Painel Admin', icon: <AdminIcon />, path: '/admin' });
     items.push({ text: 'WhatsApp', icon: <WhatsAppIcon />, path: '/whatsapp' });
   }
 
