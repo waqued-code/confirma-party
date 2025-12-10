@@ -1,7 +1,24 @@
 import axios from 'axios';
 
+// Detecta ambiente de produção no Render
+const getBaseURL = () => {
+  // Se VITE_API_URL estiver definido, usa ele
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  // Em produção (Render), usa a URL da API
+  if (window.location.hostname.includes('onrender.com') ||
+      window.location.hostname === 'confirma.party') {
+    return 'https://confirma-party-api.onrender.com/api';
+  }
+
+  // Em desenvolvimento, usa proxy
+  return '/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getBaseURL(),
 });
 
 api.interceptors.response.use(
