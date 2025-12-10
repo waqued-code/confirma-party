@@ -39,3 +39,13 @@ URLnova/
 # Prisma
 backend/prisma/*.db
 backend/prisma/*.db-journal
+
+# WhatsApp auth files (sensitive)
+backend/whatsapp-auth/
+
+# Test files
+backend/test-*.js
+
+# Evolution API local
+evolution-api/
+evolution-local/
