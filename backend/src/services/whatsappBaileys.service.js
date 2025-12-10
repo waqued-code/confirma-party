@@ -5,7 +5,7 @@
  * garantindo que a sessão seja mantida mesmo após reinícios do servidor.
  */
 
-const { default: makeWASocket, DisconnectReason, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, DisconnectReason, fetchLatestBaileysVersion, initAuthCreds, BufferJSON, proto } = require('@whiskeysockets/baileys');
 const { PrismaClient } = require('@prisma/client');
 const QRCode = require('qrcode');
 const pino = require('pino');
@@ -42,8 +42,10 @@ async function useDatabaseAuthState(authId = 'default') {
     });
   }
 
-  // Parse das credenciais existentes
-  let creds = authRecord.creds ? JSON.parse(authRecord.creds) : null;
+  // Parse das credenciais existentes usando BufferJSON para serialização correta
+  let creds = authRecord.creds
+    ? JSON.parse(authRecord.creds, BufferJSON.reviver)
+    : initAuthCreds();
 
   // Função para buscar chaves do banco
   const readData = async (key) => {
@@ -51,7 +53,7 @@ async function useDatabaseAuthState(authId = 'default') {
       const record = await prisma.whatsAppAuthKey.findUnique({
         where: { id: `${authId}:${key}` }
       });
-      return record ? JSON.parse(record.data) : null;
+      return record ? JSON.parse(record.data, BufferJSON.reviver) : null;
     } catch (error) {
       console.error(`[WhatsApp] Erro ao ler chave ${key}:`, error.message);
       return null;
@@ -66,10 +68,10 @@ async function useDatabaseAuthState(authId = 'default') {
         create: {
           id: `${authId}:${key}`,
           authId,
-          data: JSON.stringify(data)
+          data: JSON.stringify(data, BufferJSON.replacer)
         },
         update: {
-          data: JSON.stringify(data)
+          data: JSON.stringify(data, BufferJSON.replacer)
         }
       });
     } catch (error) {
@@ -90,29 +92,15 @@ async function useDatabaseAuthState(authId = 'default') {
 
   return {
     state: {
-      creds: creds || {
-        noiseKey: undefined,
-        signedIdentityKey: undefined,
-        signedPreKey: undefined,
-        registrationId: undefined,
-        advSecretKey: undefined,
-        nextPreKeyId: undefined,
-        firstUnuploadedPreKeyId: undefined,
-        serverHasPreKeys: undefined,
-        account: undefined,
-        me: undefined,
-        signalIdentities: undefined,
-        lastAccountSyncTimestamp: undefined,
-        myAppStateKeyId: undefined
-      },
+      creds,
       keys: {
         get: async (type, ids) => {
           const data = {};
           for (const id of ids) {
             const value = await readData(`${type}-${id}`);
             if (value) {
-              if (type === 'app-state-sync-key') {
-                data[id] = { keyData: value };
+              if (type === 'app-state-sync-key' && value.keyData) {
+                data[id] = proto.Message.AppStateSyncKeyData.fromObject(value);
               } else {
                 data[id] = value;
               }
@@ -137,7 +125,7 @@ async function useDatabaseAuthState(authId = 'default') {
     saveCreds: async () => {
       await prisma.whatsAppAuth.update({
         where: { id: authId },
-        data: { creds: JSON.stringify(creds) }
+        data: { creds: JSON.stringify(creds, BufferJSON.replacer) }
       });
     }
   };
