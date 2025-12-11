@@ -1,20 +1,21 @@
 import axios from 'axios';
 
-// Detecta ambiente de produção no Render
+// Detecta ambiente de produção
 const getBaseURL = () => {
   // Se VITE_API_URL estiver definido, usa ele
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
 
-  // Em produção (Render), usa a URL da API
-  if (window.location.hostname.includes('onrender.com') ||
-      window.location.hostname === 'confirma.party') {
-    return 'https://confirma-party-api.onrender.com/api';
+  const hostname = window.location.hostname;
+
+  // Em desenvolvimento local
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return '/api';
   }
 
-  // Em desenvolvimento, usa proxy
-  return '/api';
+  // Em qualquer outro caso (produção), usa a API do Render
+  return 'https://confirma-party-api.onrender.com/api';
 };
 
 const api = axios.create({
