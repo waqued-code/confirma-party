@@ -55,10 +55,19 @@ export default function Register() {
       await register(name, email, password, phone);
       navigate('/dashboard');
     } catch (err) {
-      if (err.code === 'ERR_NETWORK' || !err.response) {
-        setError('Erro de conexão. Verifique sua internet e tente novamente.');
+      console.error('Register error:', err);
+
+      // Tratamento de erros específicos
+      if (err.code === 'ERR_NETWORK' || err.code === 'ECONNABORTED') {
+        setError('Servidor indisponível. Tente novamente em alguns segundos.');
+      } else if (err.message === 'Network Error') {
+        setError('Erro de rede. Verifique sua conexão.');
+      } else if (!err.response) {
+        setError('Não foi possível conectar ao servidor.');
+      } else if (err.response?.status === 409 || err.response?.data?.error?.includes('existe')) {
+        setError('Este email já está cadastrado.');
       } else {
-        setError(err.response?.data?.error || 'Erro ao criar conta');
+        setError(err.response?.data?.error || 'Erro ao criar conta. Tente novamente.');
       }
     } finally {
       setLoading(false);

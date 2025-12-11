@@ -22,7 +22,9 @@ const app = express();
 app.use(cors({
   origin: [
     'https://confirma.party',
+    'https://www.confirma.party',
     'http://confirma.party',
+    'http://www.confirma.party',
     'http://localhost:3000',
     'http://localhost:5173',
     'https://confirma-party.onrender.com',

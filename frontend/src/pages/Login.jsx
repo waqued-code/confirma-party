@@ -39,10 +39,21 @@ export default function Login() {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      if (err.code === 'ERR_NETWORK' || !err.response) {
-        setError('Erro de conexão. Verifique sua internet e tente novamente.');
+      console.error('Login error:', err);
+
+      // Tratamento de erros específicos
+      if (err.code === 'ERR_NETWORK' || err.code === 'ECONNABORTED') {
+        setError('Servidor indisponível. Tente novamente em alguns segundos.');
+      } else if (err.message === 'Network Error') {
+        setError('Erro de rede. Verifique sua conexão.');
+      } else if (!err.response) {
+        setError('Não foi possível conectar ao servidor.');
+      } else if (err.response?.status === 401) {
+        setError('Email ou senha incorretos.');
+      } else if (err.response?.status === 404) {
+        setError('Usuário não encontrado.');
       } else {
-        setError(err.response?.data?.error || 'Erro ao fazer login');
+        setError(err.response?.data?.error || 'Erro ao fazer login. Tente novamente.');
       }
     } finally {
       setLoading(false);
