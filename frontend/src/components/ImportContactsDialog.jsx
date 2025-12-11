@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -24,6 +24,7 @@ import {
   Person as PersonIcon,
   Phone as PhoneIcon,
   Warning as WarningIcon,
+  FileUpload as FileUploadIcon,
 } from '@mui/icons-material';
 import { validatePhone } from '../utils/phoneValidator';
 
@@ -38,9 +39,13 @@ export default function ImportContactsDialog({ open, onClose, onImport }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [source, setSource] = useState(null);
+  const fileInputRef = useRef(null);
 
-  // Check if Contact Picker API is available
+  // Check if Contact Picker API is available (only Chrome Android)
   const hasContactPicker = 'contacts' in navigator && 'ContactsManager' in window;
+
+  // Detect iOS
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
   useEffect(() => {
     if (!open) {
@@ -210,6 +215,85 @@ export default function ImportContactsDialog({ open, onClose, onImport }) {
     });
   };
 
+  // Parse VCF (vCard) file
+  const parseVCF = (vcfText) => {
+    const contacts = [];
+    const vcards = vcfText.split('END:VCARD');
+
+    vcards.forEach((vcard, index) => {
+      if (!vcard.includes('BEGIN:VCARD')) return;
+
+      let name = 'Sem nome';
+      let phone = null;
+
+      // Extract name (FN field has priority, then N field)
+      const fnMatch = vcard.match(/FN[;:][^\r\n]*?:?([^\r\n]+)/i);
+      if (fnMatch) {
+        name = fnMatch[1].trim();
+      } else {
+        const nMatch = vcard.match(/^N[;:][^\r\n]*?:?([^\r\n]+)/im);
+        if (nMatch) {
+          const nameParts = nMatch[1].split(';');
+          name = [nameParts[1], nameParts[0]].filter(Boolean).join(' ').trim() || 'Sem nome';
+        }
+      }
+
+      // Extract phone (TEL field)
+      const telMatch = vcard.match(/TEL[;:][^\r\n]*?:?([+\d\s\-()]+)/i);
+      if (telMatch) {
+        phone = telMatch[1].trim();
+      }
+
+      if (phone) {
+        const phoneResult = formatAndValidatePhone(phone);
+        contacts.push({
+          id: `vcf-${index}`,
+          name: name,
+          phone: phoneResult.phone,
+          phoneFormatted: phoneResult.formatted,
+          phoneValid: phoneResult.valid,
+          phoneError: phoneResult.error,
+          source: 'vcf',
+        });
+      }
+    });
+
+    return contacts;
+  };
+
+  // Handle VCF file upload
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    setError(null);
+    setSource('vcf');
+
+    try {
+      const text = await file.text();
+      const parsedContacts = parseVCF(text);
+
+      if (parsedContacts.length === 0) {
+        setError('Nenhum contato com telefone encontrado no arquivo.');
+        setStep('select');
+      } else {
+        setContacts(parsedContacts);
+        setStep('contacts');
+      }
+    } catch (err) {
+      console.error('Error parsing VCF:', err);
+      setError('Erro ao ler o arquivo. Verifique se é um arquivo .vcf válido.');
+      setStep('select');
+    } finally {
+      setLoading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const handleToggleContact = (contact) => {
     // Don't allow selecting invalid contacts
     if (!contact.phoneValid) return;
@@ -277,15 +361,26 @@ export default function ImportContactsDialog({ open, onClose, onImport }) {
           </Alert>
         )}
 
+        {/* Hidden file input for VCF */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept=".vcf,text/vcard,text/x-vcard"
+          style={{ display: 'none' }}
+          onChange={handleFileUpload}
+        />
+
         <List sx={{ pt: 0 }}>
+          {/* VCF File Import - Works everywhere including iOS */}
           <ListItem disablePadding sx={{ mb: 1 }}>
             <ListItemButton
-              onClick={handleDeviceContacts}
+              onClick={() => fileInputRef.current?.click()}
               disabled={loading}
               sx={{
                 borderRadius: 2,
-                border: '1px solid',
-                borderColor: 'grey.200',
+                border: '2px solid',
+                borderColor: isIOS ? '#ec4899' : 'grey.200',
+                bgcolor: isIOS ? '#fdf2f8' : 'transparent',
                 '&:hover': {
                   borderColor: '#ec4899',
                   bgcolor: '#fdf2f8',
@@ -298,36 +393,34 @@ export default function ImportContactsDialog({ open, onClose, onImport }) {
                     width: 48,
                     height: 48,
                     borderRadius: 2,
-                    bgcolor: '#dcfce7',
+                    bgcolor: '#fce7f3',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <ContactPhoneIcon sx={{ color: '#16a34a', fontSize: 24 }} />
+                  <FileUploadIcon sx={{ color: '#ec4899', fontSize: 24 }} />
                 </Box>
               </ListItemIcon>
               <ListItemText
                 primary={
                   <Typography variant="body1" sx={{ fontWeight: 600, color: 'grey.800' }}>
-                    Contatos do Dispositivo
+                    Arquivo de Contatos
                   </Typography>
                 }
                 secondary={
                   <Typography variant="body2" sx={{ color: 'grey.500' }}>
-                    {hasContactPicker
-                      ? 'Importe diretamente da sua agenda'
-                      : 'Disponível apenas no Chrome/Android'}
+                    Importe arquivo .vcf (vCard)
                   </Typography>
                 }
               />
-              {!hasContactPicker && (
+              {isIOS && (
                 <Chip
-                  label="Mobile"
+                  label="iPhone"
                   size="small"
                   sx={{
-                    bgcolor: '#fef3c7',
-                    color: '#d97706',
+                    bgcolor: '#dcfce7',
+                    color: '#16a34a',
                     fontSize: '0.7rem',
                   }}
                 />
@@ -335,6 +428,68 @@ export default function ImportContactsDialog({ open, onClose, onImport }) {
             </ListItemButton>
           </ListItem>
 
+          {/* Device Contacts - Only show on Android/Chrome */}
+          {!isIOS && (
+            <ListItem disablePadding sx={{ mb: 1 }}>
+              <ListItemButton
+                onClick={handleDeviceContacts}
+                disabled={loading || !hasContactPicker}
+                sx={{
+                  borderRadius: 2,
+                  border: '1px solid',
+                  borderColor: 'grey.200',
+                  opacity: hasContactPicker ? 1 : 0.6,
+                  '&:hover': {
+                    borderColor: '#ec4899',
+                    bgcolor: '#fdf2f8',
+                  },
+                }}
+              >
+                <ListItemIcon>
+                  <Box
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 2,
+                      bgcolor: '#dcfce7',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <ContactPhoneIcon sx={{ color: '#16a34a', fontSize: 24 }} />
+                  </Box>
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="body1" sx={{ fontWeight: 600, color: 'grey.800' }}>
+                      Contatos do Dispositivo
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body2" sx={{ color: 'grey.500' }}>
+                      {hasContactPicker
+                        ? 'Importe diretamente da sua agenda'
+                        : 'Disponível apenas no Chrome/Android'}
+                    </Typography>
+                  }
+                />
+                {!hasContactPicker && (
+                  <Chip
+                    label="Android"
+                    size="small"
+                    sx={{
+                      bgcolor: '#fef3c7',
+                      color: '#d97706',
+                      fontSize: '0.7rem',
+                    }}
+                  />
+                )}
+              </ListItemButton>
+            </ListItem>
+          )}
+
+          {/* Google Contacts */}
           <ListItem disablePadding>
             <ListItemButton
               onClick={handleGoogleContacts}
@@ -343,6 +498,7 @@ export default function ImportContactsDialog({ open, onClose, onImport }) {
                 borderRadius: 2,
                 border: '1px solid',
                 borderColor: 'grey.200',
+                opacity: GOOGLE_CLIENT_ID ? 1 : 0.6,
                 '&:hover': {
                   borderColor: '#ec4899',
                   bgcolor: '#fdf2f8',
@@ -393,6 +549,15 @@ export default function ImportContactsDialog({ open, onClose, onImport }) {
           </ListItem>
         </List>
 
+        {isIOS && (
+          <Alert severity="info" sx={{ mt: 2, borderRadius: 2 }}>
+            <Typography variant="body2">
+              <strong>Como exportar contatos no iPhone:</strong><br />
+              Contatos → Selecione contatos → Compartilhar → Salvar em Arquivos
+            </Typography>
+          </Alert>
+        )}
+
         {loading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
             <CircularProgress size={32} sx={{ color: '#ec4899' }} />
@@ -427,12 +592,12 @@ export default function ImportContactsDialog({ open, onClose, onImport }) {
             </Typography>
           </Box>
           <Chip
-            label={source === 'device' ? 'Dispositivo' : 'Google'}
+            label={source === 'device' ? 'Dispositivo' : source === 'vcf' ? 'Arquivo' : 'Google'}
             size="small"
-            icon={source === 'device' ? <ContactPhoneIcon /> : <GoogleIcon />}
+            icon={source === 'device' ? <ContactPhoneIcon /> : source === 'vcf' ? <FileUploadIcon /> : <GoogleIcon />}
             sx={{
-              bgcolor: source === 'device' ? '#dcfce7' : '#dbeafe',
-              color: source === 'device' ? '#16a34a' : '#2563eb',
+              bgcolor: source === 'device' ? '#dcfce7' : source === 'vcf' ? '#fce7f3' : '#dbeafe',
+              color: source === 'device' ? '#16a34a' : source === 'vcf' ? '#ec4899' : '#2563eb',
               '& .MuiChip-icon': {
                 color: 'inherit',
               },
