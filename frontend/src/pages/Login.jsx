@@ -39,7 +39,11 @@ export default function Login() {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Erro ao fazer login');
+      if (err.code === 'ERR_NETWORK' || !err.response) {
+        setError('Erro de conexão. Verifique sua internet e tente novamente.');
+      } else {
+        setError(err.response?.data?.error || 'Erro ao fazer login');
+      }
     } finally {
       setLoading(false);
     }

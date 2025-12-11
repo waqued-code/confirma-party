@@ -55,7 +55,11 @@ export default function Register() {
       await register(name, email, password, phone);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Erro ao criar conta');
+      if (err.code === 'ERR_NETWORK' || !err.response) {
+        setError('Erro de conexão. Verifique sua internet e tente novamente.');
+      } else {
+        setError(err.response?.data?.error || 'Erro ao criar conta');
+      }
     } finally {
       setLoading(false);
     }
