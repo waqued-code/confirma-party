@@ -24,8 +24,8 @@ if (cmd === 'compact') {
   console.log(`Original:    ${input.length} bytes (${stats.originalBits} bits)`);
   console.log(`Compactado:  ${compacted.length} bytes`);
   console.log(`Razão:       ${ratio.toFixed(2)}%`);
-  console.log(`Tokens:      ${stats.literals} literais, ${stats.refs} referências`);
-  console.log(`Economia:    ${stats.savedBitsByRefs} bits salvos pelas referências`);
+  console.log(`Tokens:      ${stats.literals} literais, ${stats.singleRefs} refs simples, ${stats.pairedRefs} refs pareadas`);
+  console.log(`Economia:    ${stats.savedBySingles} bits (simples) + ${stats.savedByPaired} bits (pareadas)`);
 } else if (cmd === 'expand') {
   const restored = expand(input);
   fs.writeFileSync(path.resolve(outPath), restored);

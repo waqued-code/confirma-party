@@ -1,16 +1,39 @@
 'use strict';
 
-const FLAG_BITS = 1;
+// Formato de token (variable-length, lido bit a bit):
+//
+//   "0"  + bit                                       -> literal       (2 bits, 1 bit fonte)
+//   "10" + off16 + len8                              -> ref simples   (26 bits, 1..256 bits fonte)
+//   "11" + off16 + len4 + off16 + len4               -> ref pareada   (42 bits, 2..32 bits fonte)
+//
+// Header: 32 bits = quantidade total de bits originais (uint32 big-endian).
+//
+// Ref simples compensa quando length >= 14 (14*2 = 28 > 26 bits da ref).
+// Ref pareada compensa quando L1+L2 >= 22 (22*2 = 44 > 42 bits da ref).
+//
+// Offsets sao distancias para tras (1..65536), lengths sao (1..256) ou (1..16).
+
+const LITERAL_PREFIX_BITS = 1;
 const LITERAL_VALUE_BITS = 1;
-const OFFSET_BITS = 16;
-const LENGTH_BITS = 8;
+const LITERAL_TOTAL_BITS = LITERAL_PREFIX_BITS + LITERAL_VALUE_BITS;
 
-const REF_TOKEN_BITS = FLAG_BITS + OFFSET_BITS + LENGTH_BITS;
-const LITERAL_TOKEN_BITS = FLAG_BITS + LITERAL_VALUE_BITS;
+const REF_PREFIX_BITS = 2;
 
-const MIN_REF_LENGTH = REF_TOKEN_BITS + 1;
-const MAX_DISTANCE = 1 << OFFSET_BITS;
-const MAX_LENGTH = 1 << LENGTH_BITS;
+const SINGLE_OFFSET_BITS = 16;
+const SINGLE_LENGTH_BITS = 8;
+const SINGLE_REF_BITS = REF_PREFIX_BITS + SINGLE_OFFSET_BITS + SINGLE_LENGTH_BITS; // 26
+const MAX_SINGLE_DISTANCE = 1 << SINGLE_OFFSET_BITS; // 65536
+const MAX_SINGLE_LENGTH = 1 << SINGLE_LENGTH_BITS; // 256
+const MIN_SINGLE_LENGTH = Math.floor(SINGLE_REF_BITS / LITERAL_TOTAL_BITS) + 1; // 14
+
+const PAIRED_OFFSET_BITS = 16;
+const PAIRED_LENGTH_BITS = 4;
+const PAIRED_REF_BITS =
+  REF_PREFIX_BITS + 2 * (PAIRED_OFFSET_BITS + PAIRED_LENGTH_BITS); // 42
+const MAX_PAIRED_DISTANCE = 1 << PAIRED_OFFSET_BITS;
+const MAX_PAIRED_LENGTH = 1 << PAIRED_LENGTH_BITS; // 16
+const MIN_PAIRED_TOTAL_LENGTH =
+  Math.floor(PAIRED_REF_BITS / LITERAL_TOTAL_BITS) + 1; // 22
 
 class BitWriter {
   constructor() {
@@ -87,23 +110,53 @@ function bitsToBuffer(bits, bitLength) {
   return buf;
 }
 
-function findLongestMatch(bits, pos) {
-  const windowStart = Math.max(0, pos - MAX_DISTANCE);
-  const maxLen = Math.min(MAX_LENGTH, bits.length - pos);
+function findLongestMatch(bits, pos, maxDistance, maxLength) {
+  const windowStart = Math.max(0, pos - maxDistance);
+  const cap = Math.min(maxLength, bits.length - pos);
   let bestLen = 0;
   let bestStart = -1;
   for (let start = windowStart; start < pos; start++) {
     let len = 0;
-    while (len < maxLen && bits[start + len] === bits[pos + len]) {
+    while (len < cap && bits[start + len] === bits[pos + len]) {
       len++;
     }
     if (len > bestLen) {
       bestLen = len;
       bestStart = start;
-      if (len === maxLen) break;
+      if (len === cap) break;
     }
   }
   return { start: bestStart, length: bestLen };
+}
+
+function findBestPaired(bits, pos) {
+  const m1 = findLongestMatch(bits, pos, MAX_PAIRED_DISTANCE, MAX_PAIRED_LENGTH);
+  if (m1.length === 0) return null;
+
+  let best = null;
+  // Tenta varios L1 ate o maior, escolhe o par que cobre mais bits.
+  for (let l1 = 1; l1 <= m1.length; l1++) {
+    const m2 = findLongestMatch(
+      bits,
+      pos + l1,
+      MAX_PAIRED_DISTANCE,
+      MAX_PAIRED_LENGTH,
+    );
+    if (m2.length === 0) continue;
+    const total = l1 + m2.length;
+    if (!best || total > best.total) {
+      best = {
+        start1: m1.start,
+        length1: l1,
+        start2: m2.start,
+        length2: m2.length,
+        total,
+      };
+    }
+  }
+
+  if (!best || best.total < MIN_PAIRED_TOTAL_LENGTH) return null;
+  return best;
 }
 
 function compact(inputBuffer) {
@@ -116,29 +169,59 @@ function compact(inputBuffer) {
 
   let pos = 0;
   let literals = 0;
-  let refs = 0;
-  let savedBits = 0;
+  let singleRefs = 0;
+  let pairedRefs = 0;
+  let bitsCoveredBySingles = 0;
+  let bitsCoveredByPaired = 0;
 
   while (pos < totalBits) {
-    const { start, length } = findLongestMatch(bits, pos);
+    const single = findLongestMatch(
+      bits,
+      pos,
+      MAX_SINGLE_DISTANCE,
+      MAX_SINGLE_LENGTH,
+    );
 
-    if (length >= MIN_REF_LENGTH && start >= 0) {
-      const distance = pos - start;
+    if (single.length >= MIN_SINGLE_LENGTH) {
+      const distance = pos - single.start;
       writer.writeBit(1);
-      writer.writeBits(distance - 1, OFFSET_BITS);
-      writer.writeBits(length - 1, LENGTH_BITS);
-      savedBits += length - REF_TOKEN_BITS;
-      pos += length;
-      refs++;
-    } else {
       writer.writeBit(0);
-      writer.writeBit(bits[pos]);
-      pos++;
-      literals++;
+      writer.writeBits(distance - 1, SINGLE_OFFSET_BITS);
+      writer.writeBits(single.length - 1, SINGLE_LENGTH_BITS);
+      bitsCoveredBySingles += single.length;
+      pos += single.length;
+      singleRefs++;
+      continue;
     }
+
+    const paired = findBestPaired(bits, pos);
+    if (paired) {
+      const distance1 = pos - paired.start1;
+      const distance2 = pos + paired.length1 - paired.start2;
+      writer.writeBit(1);
+      writer.writeBit(1);
+      writer.writeBits(distance1 - 1, PAIRED_OFFSET_BITS);
+      writer.writeBits(paired.length1 - 1, PAIRED_LENGTH_BITS);
+      writer.writeBits(distance2 - 1, PAIRED_OFFSET_BITS);
+      writer.writeBits(paired.length2 - 1, PAIRED_LENGTH_BITS);
+      bitsCoveredByPaired += paired.total;
+      pos += paired.total;
+      pairedRefs++;
+      continue;
+    }
+
+    writer.writeBit(0);
+    writer.writeBit(bits[pos]);
+    pos++;
+    literals++;
   }
 
   const compacted = writer.finish();
+  const savedBySingles =
+    bitsCoveredBySingles * LITERAL_TOTAL_BITS - singleRefs * SINGLE_REF_BITS;
+  const savedByPaired =
+    bitsCoveredByPaired * LITERAL_TOTAL_BITS - pairedRefs * PAIRED_REF_BITS;
+
   return {
     compacted,
     stats: {
@@ -146,8 +229,10 @@ function compact(inputBuffer) {
       originalBytes: inputBuffer.length,
       compactedBytes: compacted.length,
       literals,
-      refs,
-      savedBitsByRefs: savedBits,
+      singleRefs,
+      pairedRefs,
+      savedBySingles,
+      savedByPaired,
     },
   };
 }
@@ -165,14 +250,35 @@ function expand(compactedBuffer) {
     const flag = reader.readBit();
     if (flag === 0) {
       bits[pos++] = reader.readBit();
-    } else {
-      const distance = reader.readBits(OFFSET_BITS) + 1;
-      const length = reader.readBits(LENGTH_BITS) + 1;
+      continue;
+    }
+
+    const composite = reader.readBit();
+    if (composite === 0) {
+      const distance = reader.readBits(SINGLE_OFFSET_BITS) + 1;
+      const length = reader.readBits(SINGLE_LENGTH_BITS) + 1;
       const start = pos - distance;
       for (let i = 0; i < length; i++) {
         bits[pos + i] = bits[start + i];
       }
       pos += length;
+    } else {
+      const distance1 = reader.readBits(PAIRED_OFFSET_BITS) + 1;
+      const length1 = reader.readBits(PAIRED_LENGTH_BITS) + 1;
+      const distance2 = reader.readBits(PAIRED_OFFSET_BITS) + 1;
+      const length2 = reader.readBits(PAIRED_LENGTH_BITS) + 1;
+
+      const start1 = pos - distance1;
+      for (let i = 0; i < length1; i++) {
+        bits[pos + i] = bits[start1 + i];
+      }
+      pos += length1;
+
+      const start2 = pos - distance2;
+      for (let i = 0; i < length2; i++) {
+        bits[pos + i] = bits[start2 + i];
+      }
+      pos += length2;
     }
   }
 
@@ -182,9 +288,13 @@ function expand(compactedBuffer) {
 module.exports = {
   compact,
   expand,
-  MIN_REF_LENGTH,
-  MAX_DISTANCE,
-  MAX_LENGTH,
-  REF_TOKEN_BITS,
-  LITERAL_TOKEN_BITS,
+  MIN_SINGLE_LENGTH,
+  MIN_PAIRED_TOTAL_LENGTH,
+  MAX_SINGLE_DISTANCE,
+  MAX_SINGLE_LENGTH,
+  MAX_PAIRED_DISTANCE,
+  MAX_PAIRED_LENGTH,
+  SINGLE_REF_BITS,
+  PAIRED_REF_BITS,
+  LITERAL_TOTAL_BITS,
 };
